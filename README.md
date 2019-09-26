@@ -1,2 +1,2 @@
-# inkxe-10
+# inkxe10
 inkxe version 10
