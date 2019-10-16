@@ -1,0 +1,39 @@
+{
+    "name": "slim/slim-skeleton",
+    "description": "A Slim franework made API for inkXE - 10 Application",
+    "keywords": [
+      "microframework",
+      "rest",
+      "router",
+      "psr7"
+    ],
+    "homepage": "http://www.google.com/",
+    "license": "MIT",
+    "authors": [
+      {
+        "name": "Tanmaya Patra",
+        "email": "tanmayap@riaxe.com",
+        "homepage": "http://www.google.com/"
+      }
+    ],
+    "require": {
+      "php": ">=5.6",
+      "chumper/zipper": "1.0.x",
+      "firebase/php-jwt": "^5.0",
+      "illuminate/database": "~5.1",
+      "monolog/monolog": "^1.17",
+      "slim/slim": "^3.1",
+      "automattic/woocommerce": "^3.0",
+      "guzzlehttp/guzzle": "^6.3"
+    },
+    "require-dev": {
+      "phpunit/phpunit": ">=5.0"
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "Tests\\": "tests/",
+        "App\\": "app/",
+        "StoreSpace\\": "app/Modules/Products/Controllers/Stores/Woocommerce/v3x/"
+      }
+    }
+  }
