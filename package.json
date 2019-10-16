@@ -1,0 +1,10 @@
+{
+	"devDependencies": {
+		"child_process": "^1.0.2",
+		"gulp": "^4.0.2",
+		"gulp-concat": "^2.6.1",
+		"gulp-copy": "^4.0.1",
+		"gulp-exec": "^4.0.0",
+		"gulp-sourcemaps": "^2.6.5"
+	}
+}
