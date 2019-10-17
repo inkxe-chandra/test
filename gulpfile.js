@@ -27,6 +27,13 @@ function xetool_apis(cb){
     });    
     cb();
   }
+  function delete_xetool(cb){
+    return exec2(envsettings.data.command_prefix+'[ -d "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'"'+' ] && rm -Rf "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'"' , function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);    
+    });    
+    cb();
+  }
   function merge_apis(cb){
     return exec2(envsettings.data.command_prefix+' cp -a '+envsettings.data.project_path+'/inkxe10-**/api/v1/app/.' +' '+envsettings.data.project_path+"/"+envsettings.data.production_path+'/api/v1/app/ ' , function (err, stdout, stderr) {
       console.log(stdout);
@@ -62,5 +69,5 @@ function xetool_apis(cb){
       });   
     cb();
   }
-  exports.xetool = series(gulp_init_settings,xetool_apis,copy_xetool_vendor,merge_apis,copy_xetool_assets);
+  exports.xetool = series(gulp_init_settings,delete_xetool,xetool_apis,copy_xetool_vendor,merge_apis,copy_xetool_assets);
   exports.start_docker = series(gulp_init_settings,build_docker_package,initiate_docker_server);
