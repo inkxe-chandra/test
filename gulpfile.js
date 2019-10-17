@@ -13,8 +13,18 @@ function gulp_init_settings(cb){
     cb();
     }
 function xetool_apis(cb){
- console.log(envsettings);
  return src(["api/v1/**","api/v1/.htaccess"]).pipe(dest(envsettings.data.project_path+"/"+envsettings.data.production_path+"/api/v1/"));
+    cb();
+  }
+  function copy_xetool_vendor(cb){
+   return src(["vendor/**"]).pipe(dest(envsettings.data.project_path+"/"+envsettings.data.production_path+"/api/v1/vendor/"));
+      cb();
+  }
+  function copy_xetool_assets(cb){
+    return exec2('('+envsettings.data.command_prefix+'[ -d "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'/assets"'+' ] || mkdir "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'/assets") && cp -a '+envsettings.data.project_path+'/inkxe10-**/assets/.' +' '+envsettings.data.project_path+"/"+envsettings.data.production_path+'/assets/' , function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);    
+    });    
     cb();
   }
   function merge_apis(cb){
@@ -52,5 +62,5 @@ function xetool_apis(cb){
       });   
     cb();
   }
-  exports.xetool = series(gulp_init_settings,xetool_apis,merge_apis);
+  exports.xetool = series(gulp_init_settings,xetool_apis,copy_xetool_vendor,merge_apis,copy_xetool_assets);
   exports.start_docker = series(gulp_init_settings,build_docker_package,initiate_docker_server);
