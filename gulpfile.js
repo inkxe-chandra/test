@@ -59,11 +59,53 @@ function xetool_apis(cb){
     cb();
   }
 
+  
   function initiate_docker_server(cb){
     var path =process.cwd();
     console.log(path);
     // console.log('cd /home/riaxe/ducker/inkxe10-docker/ && '+envsettings.data.command_prefix+' docker-compose up');
-    return exec2('cd /home/riaxe/ducker/ && '+envsettings.data.command_prefix+' docker-compose up' , function (err, stdout, stderr) {
+    return exec2('cd '+envsettings.data.project_path+' && '+envsettings.data.command_prefix+' docker-compose up' , function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);    
+      });   
+    cb();
+  }
+
+  function pull_dockerfiles(cb){
+    var path =process.cwd();
+    console.log(path);
+    // console.log('cd /home/riaxe/ducker/inkxe10-docker/ && '+envsettings.data.command_prefix+' docker-compose up');
+    return exec2('cd '+envsettings.data.project_path+' && '+envsettings.data.command_prefix+' docker-compose pull' , function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);    
+      });   
+    cb();
+  }
+  function stopxedocker(cb){
+    var path =process.cwd();
+    console.log(path);
+    // console.log('cd /home/riaxe/ducker/inkxe10-docker/ && '+envsettings.data.command_prefix+' docker-compose up');
+    return exec2('cd '+envsettings.data.project_path+' && '+envsettings.data.command_prefix+' docker-compose down && '+envsettings.data.command_prefix+' docker-compose stop' , function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);    
+      });   
+    cb();
+  }
+  function restartxedocker(cb){
+    var path =process.cwd();
+    console.log(path);
+    // console.log('cd /home/riaxe/ducker/inkxe10-docker/ && '+envsettings.data.command_prefix+' docker-compose up');
+    return exec2('cd '+envsettings.data.project_path+' && '+envsettings.data.command_prefix+' docker-compose restart' , function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);    
+      });   
+    cb();
+  }
+  function pullxeprojects(cb){
+    var path =process.cwd();
+    console.log(path);
+    // console.log('cd /home/riaxe/ducker/inkxe10-docker/ && '+envsettings.data.command_prefix+' docker-compose up');
+    return exec2('cd '+envsettings.data.project_path+' && '+envsettings.data.command_prefix+' docker exec -it php72 bash && '+envsettings.data.command_prefix+' cp -a /var/www/html/xeprojects/. /var/xeprojects' , function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);    
       });   
@@ -71,3 +113,7 @@ function xetool_apis(cb){
   }
   exports.xetool = series(gulp_init_settings,delete_xetool,xetool_apis,copy_xetool_vendor,merge_apis,copy_xetool_assets);
   exports.start_docker = series(gulp_init_settings,build_docker_package,initiate_docker_server);
+  exports.pullxedocker =series(gulp_init_settings,pull_dockerfiles); 
+  exports.stopxedocker =series(gulp_init_settings,stopxedocker);
+  exports.restartxedocker =series(gulp_init_settings,restartxedocker);
+  exports.pullxeprojects = series(gulp_init_settings,pullxeprojects);
