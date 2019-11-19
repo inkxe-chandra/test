@@ -21,14 +21,14 @@ function xetool_apis(cb){
       cb();
   }
   function copy_xetool_assets(cb){
-    return exec2('('+envsettings.data.command_prefix+'[ -d "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'/assets"'+' ] || mkdir "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'/assets") && cp -a '+envsettings.data.project_path+'/inkxe10-**/assets/.' +' '+envsettings.data.project_path+"/"+envsettings.data.production_path+'/assets/' , function (err, stdout, stderr) {
+    return exec2('('+envsettings.data.command_prefix+' [ -d "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'/assets"'+' ] || mkdir "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'/assets") && cp -a '+envsettings.data.project_path+'/inkxe10-**/assets/.' +' '+envsettings.data.project_path+"/"+envsettings.data.production_path+'/assets/' , function (err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);    
     });    
     cb();
   }
   function delete_xetool(cb){
-    return exec2(envsettings.data.command_prefix+'[ -d "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'"'+' ] && rm -Rf "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'"' , function (err, stdout, stderr) {
+    return exec2(envsettings.data.command_prefix+' [ -d "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'" ] && rm -Rf "'+envsettings.data.project_path+'/'+envsettings.data.production_path+'" || echo "Message: Directory '+envsettings.data.project_path+'/'+envsettings.data.production_path+' does not exists."' , function (err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);    
     });    
