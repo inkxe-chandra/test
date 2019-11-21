@@ -1,6 +1,6 @@
-/composer.lock
-/vendor
-/node_modules
-/package-lock.json
-/docker-src
-/xeprojects
+/vendor/
+/logs/*
+!/logs/README.md
+/.vscode
+/uploads/
+/app/Modules/Products
