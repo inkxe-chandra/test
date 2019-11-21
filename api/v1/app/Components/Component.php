@@ -24,6 +24,7 @@ use App\Modules\Cliparts\Models\ClipartTag as Tag;
 use App\Modules\Cliparts\Models\ClipartTagRelation;
 use Illuminate\Database\Capsule\Manager as DB;
 use App\Modules\Cliparts\Models\Clipart;
+use Intervention\Image\ImageManagerStatic as ImageManager;
 
 abstract class Component {
 
@@ -48,6 +49,11 @@ abstract class Component {
         $this->logger = $logger;
 
         $this->datetime = \Carbon\Carbon::now()->toDateTimeString();
+    }
+
+    public function test()
+    {
+        return "TEST OKAY";
     }
     
     /**
@@ -190,6 +196,7 @@ abstract class Component {
             }
         }
     }
+
     /**
      * Save Tags and Clipart-Tag Relations
      * Here the Common Controller is used to process this common logic
@@ -199,8 +206,8 @@ abstract class Component {
      * @return: boolean
      */
     public function saveClipartTags($clipartId, $multipletags) {
-        // Save Clipart and tags relation
-        if(isset($multipletags) && $multipletags != "") {
+         // Save Clipart and tags relation
+         if(isset($multipletags) && $multipletags != "") {
             $tags = $multipletags;
             $updatedTagIds = [];
             $tagsStringToArray = explode(',', $tags);
@@ -226,6 +233,14 @@ abstract class Component {
             } else {
                 return false;
             }
+        } else {
+            // If user requests blank/no tags
+            $clipartTags = ClipartTagRelation::where('clipart_id', $clipartId);
+            if($clipartTags->delete()) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
     /**
@@ -244,6 +259,39 @@ abstract class Component {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Save files
+     */
+    public function saveFile($fileName = "", $file_path)
+    {
+        if(!empty($fileName)) {
+            if(isset($_FILES) && count($_FILES) > 0) {
+                $enabledThumbImageFormats = ['jpeg', 'jpg', 'gif'];
+                $convertToSize = [100];
+                $uploadPath = isset($file_path) ? $file_path : UPLOAD_FOLDER;
+                if (!is_dir($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                } 
+                $fileExtension = pathinfo($_FILES[$fileName]['name'], PATHINFO_EXTENSION);
+                $random = getRandom();
+                $uploadFileName = $random . "." . $fileExtension;
+                if (copy($_FILES[$fileName]['tmp_name'], $uploadPath . $uploadFileName) === true) {
+                    // Image Uploaded. Write any operations if required --
+                    if(isset($fileExtension) && in_array($fileExtension, $enabledThumbImageFormats)) {
+                        $fileToProcess = $uploadPath . $uploadFileName;
+                        $img = ImageManager::make($fileToProcess);
+                        foreach ($convertToSize as $dimension) {
+                            $img->resize($dimension, $dimension);
+                            $img->save($uploadPath . 'thumb_' . $random . "." . $fileExtension);
+                        }
+                    }
+
+                    return $uploadFileName;
+                }
+            }
         }
     }
 }
