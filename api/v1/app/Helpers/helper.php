@@ -1,4 +1,6 @@
 <?php
+    use Illuminate\Database\Capsule\Manager as DB;
+
     /**
      * - This is a helper file where all static methods are written and which can be called from anywhere
      *   without instantiating any object. 
@@ -39,6 +41,97 @@
             else
                 $ipaddress = 'UNKNOWN';
             return $ipaddress;
+        }
+    }
+
+    function message($moduleName = null, $type = null) {
+        if(isset($moduleName)) {
+            switch ($type) {
+                // Success Messages
+                case 'saved':
+                    return $moduleName . " was saved into application";
+                    break;
+
+                case 'updated':
+                    return $moduleName . " was updated successfully";
+                    break;
+
+                case 'deleted':
+                    return $moduleName . " was deleted permanently from system";
+                    break;
+                    
+                // Errors and Warnings
+                case 'insufficient':
+                    return "Insufficient data provided, please provide some valid data";
+                    break;
+
+                case 'not_found':
+                    return "The record(s) you was requested not found, please try again later";
+                    break;
+
+                case 'exception':
+                    return "Sorry! Exception was occured";
+                    break;
+
+                case 'exist':
+                    return "Duplicate record exists. Please delete previous record before inserting new one";
+                    break;
+                
+                case 'error':
+                    return "Something went wrong, please try again later";
+                    break;
+
+                default:
+                    return "Operation was success";
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Permanently delete a image from the directory
+     */
+    function trashImage($imageUrl = null) {
+        if(isset($imageUrl) && $imageUrl != "") {
+            if (file_exists($imageUrl)) {
+                chmod($imageUrl, 0755);
+                // For Linux System Below code will change the permission of the file
+                shell_exec('chmod -R 777 ' . $imageUrl);
+                unlink($imageUrl);
+            }
+        }
+    }
+    
+    function storeSettins()
+    {
+        $condition = [];
+        $columns = [];
+        $settings = DB::table('settings')->where($condition)->select($columns)->first();
+        
+    }
+
+    /**
+     * Delete/Trash old file of a specific Model from its corsp. Folder
+     * @author: tanmayap@riaxe.com
+     * @date: 13 aug 2019 
+     * @input: Table Name, File Column Name, Where Condition, Folder Name from where file will be deleted
+     * @return: boolean
+     */
+    function deleteOldFile($tableName, $fileColumn, $condition, $folder) {
+        
+        if(isset($tableName) && $tableName != "" && isset($fileColumn) && $fileColumn != "") {
+            $getFileData = DB::table($tableName)->where($condition)->select($fileColumn)->first();
+            $rawFileLocation = $folder . $getFileData->{$fileColumn};
+            if (file_exists($rawFileLocation)) {
+                chmod($rawFileLocation, 0755);
+                // For Linux System Below code will change the permission of the file
+                shell_exec('chmod -R 777 ' . $rawFileLocation);
+                if(unlink($rawFileLocation)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } 
         }
     }
 
