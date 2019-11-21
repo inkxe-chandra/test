@@ -10,8 +10,8 @@ return [
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
         'db' => [
             'driver'    => 'mysql',
-            'host'      => 'localhost:3307',
-            'database'  => 'inkxe_x_satya',
+            'host'      => 'localhost',
+            'database'  => 'fonts',
             'username'  => 'root',
             'password'  => '',
             'charset'   => 'utf8',
@@ -31,6 +31,6 @@ return [
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
-        
+        'custom_loader_directory' => 'Customizer',
     ],
 ];

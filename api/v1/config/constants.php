@@ -25,6 +25,19 @@ defined('APP_BASE_PATH')                OR define('APP_BASE_PATH', $_SERVER['DOC
 defined('UPLOAD_FOLDER')                OR define('UPLOAD_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/');
 defined('EXTRACTED_FOLDER')             OR define('EXTRACTED_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/extracted/');
 defined('VECTOR_FOLDER')                OR define('VECTOR_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/vectors/');
+defined('PRODUCT_FOLDER')               OR define('PRODUCT_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/products/');
+defined('SWATCH_FOLDER')                OR define('SWATCH_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/swatches/');
+defined('PRINT_PROFILE_FOLDER')         OR define('PRINT_PROFILE_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/print_profile/');
+defined('PRINT_AREA_FOLDER')            OR define('PRINT_AREA_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/print_area/');
+defined('PRINT_AREA_TYPE_FOLDER')       OR define('PRINT_AREA_TYPE_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/print_area_type/');
+defined('FONT_FOLDER')                  OR define('FONT_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/fonts/');
+defined('SHAPE_FOLDER')                 OR define('SHAPE_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/shapes/');
+defined('DISTRESS_FOLDER')              OR define('DISTRESS_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/distresses/');
+defined('COLOR_FOLDER')                 OR define('COLOR_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/colors/');
+defined('BACKGROUNDPATTERN_FOLDER')     OR define('BACKGROUNDPATTERN_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/patterns/');
+defined('MASK_FOLDER')                  OR define('MASK_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/masks/');
+defined('GRAPHICFONT_FOLDER')           OR define('GRAPHICFONT_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/graphics/');
+defined('WORDCLOUDS_FOLDER')            OR define('WORDCLOUDS_FOLDER', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/wordclouds/');
 defined('SHOW_EXCEPTION')               OR define('SHOW_EXCEPTION', true);
 defined('PAGINATION_MAX_ROW')           OR define('PAGINATION_MAX_ROW', 10);
 
@@ -34,9 +47,9 @@ defined('PAGINATION_MAX_ROW')           OR define('PAGINATION_MAX_ROW', 10);
  */
 defined('STORE_NAME')                   OR define('STORE_NAME', 'WCV3'.'StoreCategory');
 defined('STORE_VERSION')                OR define('STORE_VERSION', 'v3x');
-defined('WC_API_URL')                   OR define('WC_API_URL', $domainUrl . '/wp-woocommerce/');
-defined('WC_API_CK')                    OR define('WC_API_CK', 'ck_e52bef48f59478eeccc233823db3f5bfe09bceb9');
-defined('WC_API_CS')                    OR define('WC_API_CS', 'cs_5df7733a67b2acea2e5cb69b62357ed151e51f07');
+defined('WC_API_URL')                   OR define('WC_API_URL', 'http://18.188.71.224/stores/woocommerce/');
+defined('WC_API_CK')                    OR define('WC_API_CK', 'ck_654ba63979664c47eb14587dcb33030fd81970a3');
+defined('WC_API_CS')                    OR define('WC_API_CS', 'cs_c19b5120a54e25cf4e95bd6d8a4ec3d5db8e44cf');
 defined('WC_API_VER')                   OR define('WC_API_VER', 'wc/v3');
 defined('WC_API_SECURE')                OR define('WC_API_SECURE', false);
 
