@@ -43,10 +43,10 @@ abstract class Component {
         $this->secret = "SgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z^C&F)J@NcRfUjXn2r4u7x!A%D*G-K";
 
         // Set up Logger to use in Controller
-        $logger = new \Monolog\Logger('inkxe_logger');
-        $fileHandler = new \Monolog\Handler\StreamHandler(APP_BASE_PATH . 'logs/app.log');
-        $logger->pushHandler($fileHandler);
-        $this->logger = $logger;
+        // $logger = new \Monolog\Logger('inkxe_logger');
+        // $fileHandler = new \Monolog\Handler\StreamHandler(APP_BASE_PATH . 'logs/app.log');
+        // $logger->pushHandler($fileHandler);
+        // $this->logger = $logger;
 
         $this->datetime = \Carbon\Carbon::now()->toDateTimeString();
     }
@@ -263,13 +263,17 @@ abstract class Component {
     }
 
     /**
-     * Save files
+     * @info: Save all post files to their respective folders
+     * @input: file name and file path
+     * @created: 26 nov 2019
+     * @author: tanmayap@riaxe.com
+     * @return: file name of uploaded file
      */
     public function saveFile($fileName = "", $file_path)
     {
         if(!empty($fileName)) {
             if(isset($_FILES) && count($_FILES) > 0) {
-                $enabledThumbImageFormats = ['jpeg', 'jpg', 'gif'];
+                $enabledThumbImageFormats = ['jpeg', 'jpg', 'gif', 'png'];
                 $convertToSize = [100];
                 $uploadPath = isset($file_path) ? $file_path : UPLOAD_FOLDER;
                 if (!is_dir($uploadPath)) {
@@ -288,7 +292,6 @@ abstract class Component {
                             $img->save($uploadPath . 'thumb_' . $random . "." . $fileExtension);
                         }
                     }
-
                     return $uploadFileName;
                 }
             }

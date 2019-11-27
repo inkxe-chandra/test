@@ -30,10 +30,14 @@ class ValidateJWTToken extends ParentController {
      */
     public function __invoke($request, $response, $next)
     {
+        $doAllowJWT = $this->c->get('settings')['do_load_jwt'];
         $headerResponse = [];
         $headers = apache_request_headers();
 
-        if(isset($headers['token']) && $headers['token'] != '') {
+        if($doAllowJWT === false) {
+            return $next($request, $response);
+        }
+        if(isset($headers['token']) && $headers['token'] != '' && $doAllowJWT === true) {
             // Handle JWT Exception with try catch
             try {
                 // Get the token value from Bearer string
@@ -46,7 +50,8 @@ class ValidateJWTToken extends ParentController {
             } catch (\Exception $e) {
                 $jwtResp = [
                     'status' => 0,
-                    'message' => 'Sorry, JWT Token does not match. Plese try again later'
+                    'message' => 'Sorry, JWT Token does not match. Plese try again later',
+                    'exception' => $e->getMessage()
                 ];
 
                 $this->logger->addWarning('JWT Error Occured', $jwtResp, ['date' => date('Y-m-d h:i:s')]);

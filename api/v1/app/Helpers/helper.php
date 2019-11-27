@@ -1,24 +1,193 @@
 <?php
-    use Illuminate\Database\Capsule\Manager as DB;
-
     /**
-     * - This is a helper file where all static methods are written and which can be called from anywhere
-     *   without instantiating any object. 
-     * - To call these methjods just call the methods directly with parameters if required
-     * @category   Helper
-     * @package    Helper
-     * @author     Original Author <tanmayap@riaxe.com>
-     * @author     Another Author <>
-     * @copyright  2019-2020 Riaxe Systems
-     * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
-     * @version    Release: @package_version@1.0
+     * @author: <tanmayap@riaxe.com>
+     * 
+     * ---- INDEX ----
+     * #. storeId()
+     * #. getDefaultStoreId()
+     * #. getCurrencySymbol() // JPY -> ¥
+     * #. get_client_ip()
+     * #. message()
+     * #. storeSettings()
+     * #. deleteOldFile()
+     * #. objectToArray()
+     * #. timeElapsed()
+     * #. trimChar()
+     * #. debug()
+     * #. dd()
+     * #. downloadFile()
+     * #. getRandom()
+     * #. cryptoNumber()
+     * #. getToken()
      */
     
+    use Illuminate\Database\Capsule\Manager as DB;
+    use StoreSpace\Controllers\StoreProductsController as StoreProduct;
+    use Carbon\Carbon as Carbon;
+    use PHPMailer\PHPMailer as XEMailer;
+    use App\Components\Component;
+    /**
+     * @info: Get dynamic read/write path for modules
+     * @input: read/write, module_name
+     * @created: 09 sep 2019
+     * @author: tanmayap@riaxe.com
+     * @return: valid URL
+     */
+    function email($params = []) {
+        // $component = new Component();
+        echo $c->get('settings');
+        echo RELATIVE_PATH . 'config/settings.php';
+
+        exit;
+
+        $mailResponse = [];
+        $mail = new XEMailer\PHPMailer(true);
+
+        try {
+            //Server settings
+            //$mail->SMTPDebug = XEMailer\SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+            $mail->isSMTP();                                            // Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';                    // Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+            $mail->Username   = 'shradha.riaxe.02@gmail.com';                     // SMTP username
+            $mail->Password   = 'riaxe#1234';                               // SMTP password
+            $mail->SMTPSecure = XEMailer\PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
+            $mail->Port       = 587;                                    // TCP port to connect to
+        
+            //Recipients
+            $mail->setFrom('tanmayapatra09@gmail.com', 'Mailer');
+            $mail->addAddress('tanmayap@riaxe.com', 'Joe User');     // Add a recipient
+            //$mail->addAddress('ellen@example.com');               // Name is optional
+            //$mail->addReplyTo('info@example.com', 'Information');
+            //$mail->addCC('cc@example.com');
+            //$mail->addBCC('bcc@example.com');
+        
+            // Attachments
+            //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+            //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        
+            // Content
+            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->Subject = 'Here is the subject';
+            $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+        
+            $mail->send();
+            $mailResponse = [
+                'status' => 1,
+                'message' => 'Email sent successfully'
+            ];
+        } catch (XEMailer\Exception $e) {
+            $mailResponse = [
+                'status' => 0,
+                'message' => "Message could not be sent. Mailer Error: {$mail->ErrorInfo}"
+            ];
+        }
+        return $mailResponse;
+    }
+
+    function appSettings() {
+
+    }
+    /**
+     * @info: Get dynamic read/write path for modules
+     * @input: read/write, module_name
+     * @created: 09 sep 2019
+     * @author: tanmayap@riaxe.com
+     * @return: valid URL
+     */
+    function path($mode, $module) {
+        $moduleFolder = strtoupper($module) . "_FOLDER";
+        if($mode === 'abs') { // C:/Xampp/
+            return ASSETS_PATH_W . constant($moduleFolder);
+        } else if($mode === 'read') {
+            return ASSETS_PATH_R . constant($moduleFolder);
+        }
+    }
+    /**
+     * @info: Send Json formatted data with Headers and Origins
+     * @input: Slim response and array of data and http status
+     * @created: 09 sep 2019
+     * @author: tanmayap@riaxe.com
+     * @return: Slim originated Response
+     */
+    function response($response, $apiResponse = []) {
+        return  $response->withJson($apiResponse['data'])
+            ->withHeader("Access-Control-Allow-Origin", "*")
+            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            ->withStatus($apiResponse['status']);
+    }
+    /**
+     * @info: return a store ID by validationg various scenarios
+     * @input: Slim Request param
+     * @created: 09 sep 2019
+     * @author: tanmayap@riaxe.com
+     * @return: Store ID
+     */
+    function storeId($request) {
+        $conditions = [];
+        // option 1
+        $getStoreId = $request->getQueryParam('store');
+        // option 2
+        $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
+        // option 3
+        $initStoreProduct = new StoreProduct();
+        $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
+        if(!empty($getStoreId) && $getStoreId > 0) {
+            $conditions['store_id'] = $getStoreId;
+        } else if(!empty($postStoreId) && $postStoreId > 0) {
+            $conditions['store_id'] = $postStoreId;
+        } else if(!empty($putStoreId) && $putStoreId > 0) {
+            $conditions['store_id'] = $putStoreId;
+        } else {
+            $getStoreId = getDefaultStoreId();
+            if(!empty($getStoreId) && $getStoreId > 0) {
+                $conditions['store_id'] = $getStoreId;
+            } else {
+                $conditions = [];
+            }
+        }
+        return $conditions;
+    }
+    /**
+     * Get default store id from the store setting
+     */
+    function getDefaultStoreId()
+    {
+        $getStoreSetting = storeSettings();
+        return $getStoreSetting['active_store_id'];
+    }
+
+    /**
+     * @info: converts ISO format Currency Code to their respective HTML Symbols
+     * with the help of a snippet file
+     * @input: ISO CURRENCY CODE
+     * @created: 09 sep 2019
+     * @author: tanmayap@riaxe.com
+     * @return: HTML Currency Symbol
+     */
+    function getCurrencySymbol($isoCurrencyCode) {
+        $currencies = require RELATIVE_PATH_CONFIG . '/currencies.php';
+        debug($currencies[$isoCurrencyCode]);
+    }
+
+    function convertDate($string, $format) {
+        $getStoreSetting = storeSettings();
+        $defaultDateFormat = $getStoreSetting['date_format'];
+        $defaultTimeFormat = $getStoreSetting['time_format'];
+        if(empty($format)) {
+            $format = $defaultDateFormat;
+        }
+        $carbon = Carbon::createFromFormat('d/m/Y', $string);
+
+        echo $carbon; exit;
+       
+    }
+
     /**
      * @info: This method will give IP of current client system
      * @input: none
      * @created: 09 sep 2019
-     * @modified: 
      * @author: tanmayap@riaxe.com
      * @return: IP address
      */
@@ -43,75 +212,64 @@
             return $ipaddress;
         }
     }
-
+    /**
+     * @info: this method dynamically gives you messages according to work
+     * @input: none
+     * @created: 09 nov 2019
+     * @author: tanmayap@riaxe.com
+     * @return: Dynamic Message
+     */
     function message($moduleName = null, $type = null) {
         if(isset($moduleName)) {
-            switch ($type) {
-                // Success Messages
-                case 'saved':
-                    return $moduleName . " was saved into application";
-                    break;
-
-                case 'updated':
-                    return $moduleName . " was updated successfully";
-                    break;
-
-                case 'deleted':
-                    return $moduleName . " was deleted permanently from system";
-                    break;
-                    
-                // Errors and Warnings
-                case 'insufficient':
-                    return "Insufficient data provided, please provide some valid data";
-                    break;
-
-                case 'not_found':
-                    return "The record(s) you was requested not found, please try again later";
-                    break;
-
-                case 'exception':
-                    return "Sorry! Exception was occured";
-                    break;
-
-                case 'exist':
-                    return "Duplicate record exists. Please delete previous record before inserting new one";
-                    break;
-                
-                case 'error':
-                    return "Something went wrong, please try again later";
-                    break;
-
-                default:
-                    return "Operation was success";
-                    break;
-            }
+            $messages = [
+                'saved' => "[MODULE] was saved into application",
+                'done' => 'The last operation was successfull',
+                'updated' => "[MODULE] was updated successfully",
+                'deleted' => "[MODULE] was deleted permanently from system",
+                'insufficient' => "Insufficient data provided, please provide some valid data",
+                'not_found' => "The record(s) you was requested not found, please try again later",
+                'exception' => "Sorry! Exception was occured",
+                'exist' => "Duplicate record exists. Please delete previous record before inserting new one",
+                'error' => "Something went wrong, please try again later"
+            ];
+            // dynamic set the string according to the provided module name
+            $returnMessage = str_replace('[MODULE]', $moduleName, $messages[$type]);
+            return $returnMessage;
         }
     }
 
     /**
-     * Permanently delete a image from the directory
+     * @info: Get store settings irrespective to the users
+     * @input: null
+     * @created: 20 nov 2019
+     * @author: tanmayap@riaxe.com
+     * @return: Settings in array format
      */
-    function trashImage($imageUrl = null) {
-        if(isset($imageUrl) && $imageUrl != "") {
-            if (file_exists($imageUrl)) {
-                chmod($imageUrl, 0755);
-                // For Linux System Below code will change the permission of the file
-                shell_exec('chmod -R 777 ' . $imageUrl);
-                unlink($imageUrl);
-            }
-        }
-    }
-    
-    function storeSettins()
+    function storeSettings()
     {
-        $condition = [];
+        $siteSettings = [];
+        $condition = [
+            'is_secure' => 0,
+            'autoload' => 1
+        ];
         $columns = [];
-        $settings = DB::table('settings')->where($condition)->select($columns)->first();
+        $settings = DB::table('settings');
+        if(isset($condition) && count($condition) > 0) {
+            $settings->where($condition);
+        }
+        if(isset($columns) && count($columns) > 0) {
+            $settings->select($columns);
+        }
+        $settings = $settings->get();
         
+        foreach ($settings as $key => $setting) {
+            $siteSettings[$setting->setting_key] = $setting->setting_value;
+        }
+        return $siteSettings;
     }
 
     /**
-     * Delete/Trash old file of a specific Model from its corsp. Folder
+     * Delete/Trash old file and thumbs(is exists) of a specific Model from its corsp. Folder
      * @author: tanmayap@riaxe.com
      * @date: 13 aug 2019 
      * @input: Table Name, File Column Name, Where Condition, Folder Name from where file will be deleted
@@ -120,19 +278,49 @@
     function deleteOldFile($tableName, $fileColumn, $condition, $folder) {
         
         if(isset($tableName) && $tableName != "" && isset($fileColumn) && $fileColumn != "") {
-            $getFileData = DB::table($tableName)->where($condition)->select($fileColumn)->first();
-            $rawFileLocation = $folder . $getFileData->{$fileColumn};
-            if (file_exists($rawFileLocation)) {
-                chmod($rawFileLocation, 0755);
-                // For Linux System Below code will change the permission of the file
-                shell_exec('chmod -R 777 ' . $rawFileLocation);
-                if(unlink($rawFileLocation)) {
-                    return true;
-                } else {
-                    return false;
+            $getSelectedRecord = DB::table($tableName);
+            if(isset($condition) && count($condition) > 0) {
+                $getSelectedRecord->where($condition);
+            }
+            $getFileData = $getSelectedRecord->select($fileColumn)->get();
+            if($getSelectedRecord->select($fileColumn)->count() > 0) {
+                $getAllFileName = $getSelectedRecord->select($fileColumn)->get();
+                $deleteCount = 0;
+                foreach ($getAllFileName as $key => $getFile) {
+                    if(isset($getFile->file_name) && $getFile->file_name != "") {
+                        $rawFileLocation = $folder . $getFile->file_name;
+                        $rawThumbFileLocation = $folder . 'thumb_' . $getFile->file_name;
+
+                        if (file_exists($rawFileLocation)) {
+                            chmod($rawFileLocation, 0755);
+                            // For Linux System Below code will change the permission of the file
+                            shell_exec('chmod -R 777 ' . $rawFileLocation);
+                            $deleteCount++;
+                            if(unlink($rawFileLocation)) {
+                                unlink($rawThumbFileLocation);
+                            }
+                        } 
+                    }
                 }
-            } 
+            }
+            
+            // exit;
+
+            // $rawFileLocation = $folder . $getFileData->{$fileColumn};
+            // $rawThumbFileLocation = $folder . 'thumb_' . $getFileData->{$fileColumn};
+            // if (file_exists($rawFileLocation)) {
+            //     chmod($rawFileLocation, 0755);
+            //     // For Linux System Below code will change the permission of the file
+            //     shell_exec('chmod -R 777 ' . $rawFileLocation);
+            //     if(unlink($rawFileLocation)) {
+            //         unlink($rawThumbFileLocation);
+            //         return true;
+            //     } else {
+            //         return false;
+            //     }
+            // } 
         }
+        return $deleteCount > 1 ? true : false;
     }
 
     function objectToArray($d) {
@@ -239,13 +427,15 @@
      * @info: Sometimes to display an array we need to use toArray() additionaly like Laravel used.
      * So to display these array those use toArray() additionally, dd() is used for this purpose
      */
-    function dd($array, $abort = false)
+    if ( ! function_exists('dd'))
     {
-        echo '<pre>';
-        print_r($array->toArray());
-        echo '</pre>';
-        if($abort === true){
-            exit(0);
+        function dd($array, $abort = false) {
+            echo '<pre>';
+            print_r($array->toArray());
+            echo '</pre>';
+            if($abort === true){
+                exit(0);
+            }
         }
     }
 

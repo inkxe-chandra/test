@@ -31,6 +31,7 @@ return [
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
-        'custom_loader_directory' => 'Customizer',
+        'do_load_jwt' => false,
+        'custom_loader_directory' => 'Custom'
     ],
 ];
