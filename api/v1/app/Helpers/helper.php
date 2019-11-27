@@ -125,28 +125,28 @@
      * @return: Store ID
      */
     function storeId($request) {
-        $conditions = [];
-        // option 1
-        $getStoreId = $request->getQueryParam('store');
-        // option 2
-        $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
-        // option 3
-        $initStoreProduct = new StoreProduct();
-        $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
-        if(!empty($getStoreId) && $getStoreId > 0) {
-            $conditions['store_id'] = $getStoreId;
-        } else if(!empty($postStoreId) && $postStoreId > 0) {
-            $conditions['store_id'] = $postStoreId;
-        } else if(!empty($putStoreId) && $putStoreId > 0) {
-            $conditions['store_id'] = $putStoreId;
-        } else {
-            $getStoreId = getDefaultStoreId();
-            if(!empty($getStoreId) && $getStoreId > 0) {
-                $conditions['store_id'] = $getStoreId;
-            } else {
-                $conditions = [];
-            }
-        }
+        $conditions = ['store_id' => 1];
+        // // option 1
+        // $getStoreId = $request->getQueryParam('store');
+        // // option 2
+        // $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
+        // // option 3
+        // $initStoreProduct = new StoreProduct();
+        // $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
+        // if(!empty($getStoreId) && $getStoreId > 0) {
+        //     $conditions['store_id'] = $getStoreId;
+        // } else if(!empty($postStoreId) && $postStoreId > 0) {
+        //     $conditions['store_id'] = $postStoreId;
+        // } else if(!empty($putStoreId) && $putStoreId > 0) {
+        //     $conditions['store_id'] = $putStoreId;
+        // } else {
+        //     $getStoreId = getDefaultStoreId();
+        //     if(!empty($getStoreId) && $getStoreId > 0) {
+        //         $conditions['store_id'] = $getStoreId;
+        //     } else {
+        //         $conditions = [];
+        //     }
+        // }
         return $conditions;
     }
     /**
