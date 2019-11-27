@@ -38,8 +38,8 @@ defined('BASE_URL')                     OR define('BASE_URL', $domainUrl . WORKI
 |            Make sure that all the module's folders are setup correctly
 */
 // defined('ASSETS_PATH_W')                  OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/');
-defined('ASSETS_PATH_W')                  OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api/assets/'); ///for server
-defined('ASSETS_PATH_R')                  OR define('ASSETS_PATH_R', $domainUrl . '/api/assets/'); ///for server
+defined('ASSETS_PATH_W')                  OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api_git/xetool/api/assets/'); ///for server
+defined('ASSETS_PATH_R')                  OR define('ASSETS_PATH_R', $domainUrl . '/api_git/xetool/api/assets/'); ///for server
 // defined('ASSETS_PATH_R')                  OR define('ASSETS_PATH_R', $domainUrl . '/api/v1/uploads/');
 
 // Modules Folders
