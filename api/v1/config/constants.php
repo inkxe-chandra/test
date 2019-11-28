@@ -57,7 +57,7 @@ defined('COLOR_FOLDER')                 OR define('COLOR_FOLDER', 'colors/');
 defined('BACKGROUNDPATTERN_FOLDER')     OR define('BACKGROUNDPATTERN_FOLDER', 'patterns/');
 defined('MASK_FOLDER')                  OR define('MASK_FOLDER', 'masks/');
 defined('GRAPHICFONT_FOLDER')           OR define('GRAPHICFONT_FOLDER', 'graphics/');
-defined('WORDCLOUDS_FOLDER')            OR define('WORDCLOUDS_FOLDER', 'wordclouds/');
+defined('WORDCLOUD_FOLDER')             OR define('WORDCLOUD_FOLDER', 'wordclouds/');
 defined('SHOW_EXCEPTION')               OR define('SHOW_EXCEPTION', true);
 defined('PAGINATION_MAX_ROW')           OR define('PAGINATION_MAX_ROW', 10);
 
