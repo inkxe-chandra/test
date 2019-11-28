@@ -5,6 +5,7 @@ services:
     networks:
       - backend
   apache:
+    container_name: php72
     image: chandra9853/inkxe_x_test_1:php72
     depends_on:
       - php
