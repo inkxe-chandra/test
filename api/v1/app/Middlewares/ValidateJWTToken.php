@@ -33,7 +33,7 @@ class ValidateJWTToken extends ParentController {
         $doAllowJWT = $this->c->get('settings')['do_load_jwt'];
         $headerResponse = [];
         $headers = apache_request_headers();
-
+        // Easily turn on/off JWT from config
         if($doAllowJWT === false) {
             return $next($request, $response);
         }

@@ -1,0 +1,16 @@
+<?php 
+/*
+ |--------------------------------------------------------------------------
+ | Database Configuration for the Application
+ |--------------------------------------------------------------------------
+ */
+    return [
+        'driver'    => 'mysql',
+        'host'      => 'localhost',
+        'database'  => 'inkxe_x',
+        'username'  => 'root',
+        'password'  => '',
+        'charset'   => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'prefix'    => ''
+    ];

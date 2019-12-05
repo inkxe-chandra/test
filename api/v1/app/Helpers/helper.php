@@ -3,6 +3,7 @@
      * @author: <tanmayap@riaxe.com>
      * 
      * ---- INDEX ----
+     * #. email()
      * #. storeId()
      * #. getDefaultStoreId()
      * #. getCurrencySymbol() // JPY -> ¥
@@ -22,10 +23,11 @@
      */
     
     use Illuminate\Database\Capsule\Manager as DB;
-    use StoreSpace\Controllers\StoreProductsController as StoreProduct;
+    //use StoreSpace\Controllers\StoreProductsController as StoreProduct;
     use Carbon\Carbon as Carbon;
     use PHPMailer\PHPMailer as XEMailer;
     use App\Components\Component;
+
     /**
      * @info: Get dynamic read/write path for modules
      * @input: read/write, module_name
@@ -34,43 +36,73 @@
      * @return: valid URL
      */
     function email($params = []) {
-        // $component = new Component();
-        echo $c->get('settings');
-        echo RELATIVE_PATH . 'config/settings.php';
-
-        exit;
-
+        // Parameter should be sent in below format
+        $emailFormat = [
+            'from' => ['email' => 'tanmayap@riaxe.com', 'name' => 'Tanmaya Riaxe'],
+            'recipients' => [
+                'to' => ['email' => 'tanmayapatra09@gmail.com', 'name' => 'Tanmaya Personal 1'],
+                'reply_to' => ['email' => 'tanmaya4u12@gmail.com', 'name' => 'Tanmaya Personal 2'],
+                'cc' => ['email' => 'tanmayasmtpdev@gmail.com', 'name' => 'Tanmaya Personal 3'],
+                'bcc' => ['email' => 'satyabratap@riaxe.com', 'name' => 'Satyabrata Riaxe'],
+            ],
+            'attachments' => [
+                '', ''
+            ],
+            'subject' => 'This is a test mail with a test subject',
+            'body' => 'This is a test mail with a test body',
+        ];
+        
+        // Email functionality starts here
+        $configs = require RELATIVE_PATH . 'config/email.php';
         $mailResponse = [];
         $mail = new XEMailer\PHPMailer(true);
-
         try {
             //Server settings
-            //$mail->SMTPDebug = XEMailer\SMTP::DEBUG_SERVER;                      // Enable verbose debug output
-            $mail->isSMTP();                                            // Send using SMTP
-            $mail->Host       = 'smtp.gmail.com';                    // Set the SMTP server to send through
-            $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-            $mail->Username   = 'shradha.riaxe.02@gmail.com';                     // SMTP username
-            $mail->Password   = 'riaxe#1234';                               // SMTP password
-            $mail->SMTPSecure = XEMailer\PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
-            $mail->Port       = 587;                                    // TCP port to connect to
+            if(!empty($configs['do_debug']) && $configs['do_debug'] === true)
+                $mail->SMTPDebug = XEMailer\SMTP::DEBUG_SERVER;
+            $mail->isSMTP();
+            $mail->Host       = $configs['host_name'];
+            if(!empty($configs['smtp_auth']) && $configs['smtp_auth'] === true)
+                $mail->SMTPAuth   = true;
+            $mail->Username   = $configs['username'];
+            $mail->Password   = $configs['password'];
+            $mail->SMTPSecure = XEMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = $configs['port'];
         
-            //Recipients
-            $mail->setFrom('tanmayapatra09@gmail.com', 'Mailer');
-            $mail->addAddress('tanmayap@riaxe.com', 'Joe User');     // Add a recipient
-            //$mail->addAddress('ellen@example.com');               // Name is optional
-            //$mail->addReplyTo('info@example.com', 'Information');
-            //$mail->addCC('cc@example.com');
-            //$mail->addBCC('bcc@example.com');
-        
-            // Attachments
-            //$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-            //$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+            // From Email settings
+            if(!empty($params['from']) && count($params['from']) > 0) {
+                $mail->setFrom($params['from']['email'], $params['from']['name']);
+            }
+            
+            // Recipients Setup
+            if(!empty($params['recipients']) && count($params['recipients']) > 0) {
+                if(!empty($params['recipients']['to']['email']))
+                    $mail->addAddress($params['recipients']['to']['email'], $params['recipients']['to']['name']);     // Add a recipient
+
+                if(!empty($params['recipients']['reply_to']['email']))
+                    $mail->addReplyTo($params['recipients']['reply_to']['email'], $params['recipients']['reply_to']['name']);     // Add a recipient
+                
+                if(!empty($params['recipients']['cc']['email']))
+                    $mail->addCC($params['recipients']['cc']['email'], $params['recipients']['cc']['name']);     // Add a recipient
+
+                if(!empty($params['recipients']['bcc']['email']))
+                    $mail->addBCC($params['recipients']['bcc']['email'], $params['recipients']['bcc']['name']);     // Add a recipient
+            }
+            
+            // Attachments linking
+            if(!empty($params['attachments']) && count($params['attachments']) > 0) {
+                foreach ($params['attachments'] as $attachment) {
+                    if(!empty($attachment))
+                        $mail->addAttachment($attachment);
+                }
+            }
         
             // Content
-            $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = 'Here is the subject';
-            $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+            $mail->isHTML(true);// Set email format to HTML
+            if(!empty($params['subject']) && $params['subject'] != "")
+                $mail->Subject = $params['subject'];
+            if(!empty($params['body']) && $params['body'] != "")
+                $mail->Body    = $params['body'];
         
             $mail->send();
             $mailResponse = [
@@ -86,8 +118,26 @@
         return $mailResponse;
     }
 
-    function appSettings() {
+    function showException() {
+        $setting = include RELATIVE_PATH . 'config/settings.php';
+        return $setting['settings']['show_exception'];
+    }
 
+    function json_clean_decode($json, $assoc = false, $depth = 512, $options = 0) {
+        // search and remove comments like /* */ and //
+        $json = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
+       
+        if(version_compare(phpversion(), '5.4.0', '>=')) {
+            $json = json_decode($json, $assoc, $depth, $options);
+        }
+        elseif(version_compare(phpversion(), '5.3.0', '>=')) {
+            $json = json_decode($json, $assoc, $depth);
+        }
+        else {
+            $json = json_decode($json, $assoc);
+        }
+    
+        return $json;
     }
     /**
      * @info: Get dynamic read/write path for modules
@@ -125,28 +175,35 @@
      * @return: Store ID
      */
     function storeId($request) {
-        $conditions = ['store_id' => 1];
-        // // option 1
-        // $getStoreId = $request->getQueryParam('store');
-        // // option 2
-        // $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
-        // // option 3
-        // $initStoreProduct = new StoreProduct();
-        // $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
-        // if(!empty($getStoreId) && $getStoreId > 0) {
-        //     $conditions['store_id'] = $getStoreId;
-        // } else if(!empty($postStoreId) && $postStoreId > 0) {
-        //     $conditions['store_id'] = $postStoreId;
-        // } else if(!empty($putStoreId) && $putStoreId > 0) {
-        //     $conditions['store_id'] = $putStoreId;
-        // } else {
-        //     $getStoreId = getDefaultStoreId();
-        //     if(!empty($getStoreId) && $getStoreId > 0) {
-        //         $conditions['store_id'] = $getStoreId;
-        //     } else {
-        //         $conditions = [];
-        //     }
-        // }
+        $conditions = [];
+        $getStoreId = getDefaultStoreId();
+        if(!empty($getStoreId) && $getStoreId > 0) {
+            $conditions['store_id'] = $getStoreId;
+        } else {
+            $conditions = [];
+        }
+        /*$conditions = [];
+        // option 1
+        $getStoreId = $request->getQueryParam('store');
+        // option 2
+        $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
+        // option 3
+        $initStoreProduct = new StoreProduct();
+        $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
+        if(!empty($getStoreId) && $getStoreId > 0) {
+            $conditions['store_id'] = $getStoreId;
+        } else if(!empty($postStoreId) && $postStoreId > 0) {
+            $conditions['store_id'] = $postStoreId;
+        } else if(!empty($putStoreId) && $putStoreId > 0) {
+            $conditions['store_id'] = $putStoreId;
+        } else {
+            $getStoreId = getDefaultStoreId();
+            if(!empty($getStoreId) && $getStoreId > 0) {
+                $conditions['store_id'] = $getStoreId;
+            } else {
+                $conditions = [];
+            }
+        }*/
         return $conditions;
     }
     /**
@@ -167,21 +224,8 @@
      * @return: HTML Currency Symbol
      */
     function getCurrencySymbol($isoCurrencyCode) {
-        $currencies = require RELATIVE_PATH_CONFIG . '/currencies.php';
+        $currencies = require RELATIVE_PATH . '/currencies.php';
         debug($currencies[$isoCurrencyCode]);
-    }
-
-    function convertDate($string, $format) {
-        $getStoreSetting = storeSettings();
-        $defaultDateFormat = $getStoreSetting['date_format'];
-        $defaultTimeFormat = $getStoreSetting['time_format'];
-        if(empty($format)) {
-            $format = $defaultDateFormat;
-        }
-        $carbon = Carbon::createFromFormat('d/m/Y', $string);
-
-        echo $carbon; exit;
-       
     }
 
     /**
@@ -223,6 +267,7 @@
         if(isset($moduleName)) {
             $messages = [
                 'saved' => "[MODULE] was saved into application",
+                'clone' => "Record was cloned successfully",
                 'done' => 'The last operation was successfull',
                 'updated' => "[MODULE] was updated successfully",
                 'deleted' => "[MODULE] was deleted permanently from system",
@@ -276,7 +321,7 @@
      * @return: boolean
      */
     function deleteOldFile($tableName, $fileColumn, $condition, $folder) {
-        
+        $deleteCount = 0;
         if(isset($tableName) && $tableName != "" && isset($fileColumn) && $fileColumn != "") {
             $getSelectedRecord = DB::table($tableName);
             if(isset($condition) && count($condition) > 0) {
@@ -285,7 +330,7 @@
             $getFileData = $getSelectedRecord->select($fileColumn)->get();
             if($getSelectedRecord->select($fileColumn)->count() > 0) {
                 $getAllFileName = $getSelectedRecord->select($fileColumn)->get();
-                $deleteCount = 0;
+                
                 foreach ($getAllFileName as $key => $getFile) {
                     if(isset($getFile->file_name) && $getFile->file_name != "") {
                         $rawFileLocation = $folder . $getFile->file_name;
@@ -303,26 +348,17 @@
                     }
                 }
             }
-            
-            // exit;
-
-            // $rawFileLocation = $folder . $getFileData->{$fileColumn};
-            // $rawThumbFileLocation = $folder . 'thumb_' . $getFileData->{$fileColumn};
-            // if (file_exists($rawFileLocation)) {
-            //     chmod($rawFileLocation, 0755);
-            //     // For Linux System Below code will change the permission of the file
-            //     shell_exec('chmod -R 777 ' . $rawFileLocation);
-            //     if(unlink($rawFileLocation)) {
-            //         unlink($rawThumbFileLocation);
-            //         return true;
-            //     } else {
-            //         return false;
-            //     }
-            // } 
         }
         return $deleteCount > 1 ? true : false;
     }
 
+    /**
+     * Convert the stdClass() object Array to Normal Associative array
+     * @author: tanmayap@riaxe.com
+     * @date: 13 aug 2019 
+     * @input: objectified Array
+     * @return: associative array
+     */
     function objectToArray($d) {
         if (is_object($d)) {
             // Gets the properties of the given object
@@ -344,42 +380,7 @@
         }
     }
 
-    /**
-     * @info: It will convert a long text into a short text with a elipse dots
-     * @input: long string
-     * @created: 09 sep 2019
-     * @modified: 
-     * @author: tanmayap@riaxe.com
-     * @return: a short format of string with elipse dots
-     */
-    function timeElapsed($datetime, $full = false) {
-        $now = new DateTime;
-        $ago = new DateTime($datetime);
-        $diff = $now->diff($ago);
-
-        $diff->w = floor($diff->d / 7);
-        $diff->d -= $diff->w * 7;
-
-        $string = array(
-            'y' => 'year',
-            'm' => 'month',
-            'w' => 'week',
-            'd' => 'day',
-            'h' => 'hour',
-            'i' => 'minute',
-            's' => 'second',
-        );
-        foreach ($string as $k => &$v) {
-            if ($diff->$k) {
-                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
-            } else {
-                unset($string[$k]);
-            }
-        }
-
-        if (!$full) $string = array_slice($string, 0, 1);
-        return $string ? implode(', ', $string) . ' ago' : 'just now';
-    }
+    
     /**
      * @info: It will convert a long text into a short text with a elipse dots
      * @input: long string
@@ -484,6 +485,13 @@
         }
     } // end 
 
+    /**
+     * Get random numbers based on timestamp
+     * @author: tanmayap@riaxe.com
+     * @date: 13 aug 2019 
+     * @input: Table Name, File Column Name, Where Condition, Folder Name from where file will be deleted
+     * @return: boolean
+     */
     function getRandom()
     {
         $randomNumber = date('Ymdhis').rand(99,9999);
@@ -512,7 +520,13 @@
         } while ($rnd > $range);
         return $min + $rnd;
     }
-
+    /**
+     * Generate more strong random string which can be used for token purposes
+     * @author: tanmayap@riaxe.com
+     * @date: 13 aug 2019 
+     * @input: Table Name, File Column Name, Where Condition, Folder Name from where file will be deleted
+     * @return: boolean
+     */
     function getToken($length)
     {
         $token = "";

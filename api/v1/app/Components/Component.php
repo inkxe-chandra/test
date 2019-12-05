@@ -20,10 +20,7 @@
 namespace App\Components;
 
 use Interop\Container\ContainerInterface;
-use App\Modules\Cliparts\Models\ClipartTag as Tag;
-use App\Modules\Cliparts\Models\ClipartTagRelation;
 use Illuminate\Database\Capsule\Manager as DB;
-use App\Modules\Cliparts\Models\Clipart;
 use Intervention\Image\ImageManagerStatic as ImageManager;
 
 abstract class Component {
@@ -43,17 +40,14 @@ abstract class Component {
         $this->secret = "SgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z^C&F)J@NcRfUjXn2r4u7x!A%D*G-K";
 
         // Set up Logger to use in Controller
-        // $logger = new \Monolog\Logger('inkxe_logger');
-        // $fileHandler = new \Monolog\Handler\StreamHandler(APP_BASE_PATH . 'logs/app.log');
-        // $logger->pushHandler($fileHandler);
-        // $this->logger = $logger;
+        $logger = new \Monolog\Logger('inkxe_logger');
+        $formatter = new \Monolog\Formatter\JsonFormatter();
+        $fileHandler = new \Monolog\Handler\StreamHandler(RELATIVE_PATH . 'logs/logs.json');
+        $fileHandler->setFormatter($formatter);
+        $logger->pushHandler($fileHandler);
+        $this->logger = $logger;
 
         $this->datetime = \Carbon\Carbon::now()->toDateTimeString();
-    }
-
-    public function test()
-    {
-        return "TEST OKAY";
     }
     
     /**
@@ -194,71 +188,6 @@ abstract class Component {
             if (isset($nextId) && $nextId != "" && $nextId > 0) {
                 return $nextId;
             }
-        }
-    }
-
-    /**
-     * Save Tags and Clipart-Tag Relations
-     * Here the Common Controller is used to process this common logic
-     * @author: tanmayap@riaxe.com
-     * @date: 13 aug 2019 
-     * @input: cliart_id, tags(in comma separated)
-     * @return: boolean
-     */
-    public function saveClipartTags($clipartId, $multipletags) {
-         // Save Clipart and tags relation
-         if(isset($multipletags) && $multipletags != "") {
-            $tags = $multipletags;
-            $updatedTagIds = [];
-            $tagsStringToArray = explode(',', $tags);
-            foreach ($tagsStringToArray as $key => $tag) {
-                // Save each individual Tag to table
-                if(Tag::where(['name' => trim($tag)])->count() == 0) {
-                    $saveTag = new Tag(['name' => trim($tag)]);
-                    $saveTag->save();
-                    $tagLastInsertId = $saveTag->xe_id;
-                } else {
-                    $getTagDetails = Tag::where(['name' => trim($tag)])->select('xe_id')->first();
-                    $tagLastInsertId = $getTagDetails['xe_id'];
-                }
-                if(isset($tagLastInsertId) && $tagLastInsertId > 0) {
-                    $updatedTagIds[] = $tagLastInsertId;
-                }
-            }
-
-            // Start SYNC Tags into Clipart_Tag Relationship Table
-            $findClipart = Clipart::find($clipartId);
-            if($findClipart->tags()->sync($updatedTagIds)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            // If user requests blank/no tags
-            $clipartTags = ClipartTagRelation::where('clipart_id', $clipartId);
-            if($clipartTags->delete()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-    /**
-     * Save Categories/Sub-categories and Clipart-Category Relations
-     * Here the Common Controller is used to process this common logic
-     * @author: tanmayap@riaxe.com
-     * @date: 17 sept 2019 
-     * @input: clipart_id, tags(in comma separated)
-     * @return: boolean
-     */
-    public function saveClipartCategories($clipartId, $categoryIds) {
-        $getAllCategoryArr = json_decode($categoryIds);
-        // SYNC Categories to the Clipart_Category Relationship Table
-        $findClipart = Clipart::find($clipartId);
-        if($findClipart->categories()->sync($getAllCategoryArr)) {
-            return true;
-        } else {
-            return false;
         }
     }
 

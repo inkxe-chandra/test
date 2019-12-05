@@ -27,12 +27,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package Inkxe-X Microservice Framework
- * @author  Inkxe-X Dev Team
- * @copyright   Copyright (c) 2019 , InkXE Pvt Ltd
- * @license http://opensource.org/licenses/MIT  MIT License
- * @link    https://inkxe.com
- * @version 1.0.0
+ * @package	Inkxe-X Microservice Framework
+ * @author	Inkxe-X Dev Team
+ * @copyright	Copyright (c) 2019 , InkXE Pvt Ltd
+ * @license	http://opensource.org/licenses/MIT	MIT License
+ * @link	https://inkxe.com
+ * @version	1.0.0
  */
 
 // Initialize the constant file
@@ -53,7 +53,7 @@ $loader->setPsr4("StoreSpace\\", "app/Modules/Stores/" . STORE_NAME . "/" . STOR
 define('ENVIRONMENT', XE_ENV ? XE_ENV : 'production');
 
 // Set default timezone
-ini_set('date.timezone', 'America/Denver');
+ini_set('date.timezone', 'Asia/Kolkata');
 
 /*
 *---------------------------------------------------------------
@@ -97,7 +97,7 @@ require __DIR__ . '/app/Helpers/helper.php';
  */
 $modules = require __DIR__ . '/config/modules.php';
 $custom_loader_directory = $container->get('settings')['custom_loader_directory'];
-//debug($modules, true);
+
 foreach($modules as $module => $status) {
     if(isset($status) && count($status) > 0) {
         if(isset($status) && $status['CORE'] === true) {

@@ -3,29 +3,29 @@
  |--------------------------------------------------------------------------
  | Global Constants for the Application
  |--------------------------------------------------------------------------
+ | @author: tanmayap@riaxe.com
+ | Switch between : production or development
  */
 
 defined('XE_ENV') OR define('XE_ENV', 'development');
 
-/**
- * @info: Commonly used application contacts
- * @author: tanmayap@riaxe.com 
- * @date: 21 Aug 2019
+/*
+ |--------------------------------------------------------------------------
+ | Need to change after Installation process
+ |--------------------------------------------------------------------------
+ | 
  */
-/**
- * NEED TO CHANGE BY USER AFTER INSTALLATION
- */
-defined('WORKING_DIR') OR define('WORKING_DIR', '/api/v1/');
-
-/**
- * System Specific Constants.
- * NO NEED TO CHANGE
- */
+defined('WORKING_DIR') OR define('WORKING_DIR', '/api/v2/');
 
 
+/*
+|--------------------------------------------------------------------------
+| Base Site URL. No need to change
+|--------------------------------------------------------------------------
+*/
 $domainUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
 defined('RELATIVE_PATH')                OR define('RELATIVE_PATH', $_SERVER['DOCUMENT_ROOT'] . WORKING_DIR );
-defined('BASE_URL')                     OR define('BASE_URL', $domainUrl . WORKING_DIR); // http://localhost/api/v1/
+defined('BASE_URL')                     OR define('BASE_URL', $domainUrl . WORKING_DIR); // http://localhost/api/v2/
 
 /*
 |--------------------------------------------------------------------------
@@ -37,10 +37,8 @@ defined('BASE_URL')                     OR define('BASE_URL', $domainUrl . WORKI
 | IMPORTANT: Assets folder contains all the module's corresponding fodlers and sub-folders. 
 |            Make sure that all the module's folders are setup correctly
 */
-// defined('ASSETS_PATH_W')                  OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api/v1/uploads/');
-defined('ASSETS_PATH_W')                  OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api_git/xetool/api/assets/'); ///for server
-defined('ASSETS_PATH_R')                  OR define('ASSETS_PATH_R', $domainUrl . '/api_git/xetool/api/assets/'); ///for server
-// defined('ASSETS_PATH_R')                  OR define('ASSETS_PATH_R', $domainUrl . '/api/v1/uploads/');
+defined('ASSETS_PATH_W')                OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api/assets/');
+defined('ASSETS_PATH_R')                OR define('ASSETS_PATH_R', $domainUrl . '/api/assets/');
 
 // Modules Folders
 defined('EXTRACTED_FOLDER')             OR define('EXTRACTED_FOLDER', 'extracted/');
@@ -51,20 +49,22 @@ defined('PRINT_PROFILE_FOLDER')         OR define('PRINT_PROFILE_FOLDER', 'print
 defined('PRINT_AREA_FOLDER')            OR define('PRINT_AREA_FOLDER', 'print_area/');
 defined('PRINT_AREA_TYPE_FOLDER')       OR define('PRINT_AREA_TYPE_FOLDER', 'print_area_type/');
 defined('FONT_FOLDER')                  OR define('FONT_FOLDER', 'fonts/');
+
 defined('SHAPE_FOLDER')                 OR define('SHAPE_FOLDER', 'shapes/');
 defined('DISTRESS_FOLDER')              OR define('DISTRESS_FOLDER', 'distresses/');
 defined('COLOR_FOLDER')                 OR define('COLOR_FOLDER', 'colors/');
 defined('BACKGROUNDPATTERN_FOLDER')     OR define('BACKGROUNDPATTERN_FOLDER', 'patterns/');
 defined('MASK_FOLDER')                  OR define('MASK_FOLDER', 'masks/');
 defined('GRAPHICFONT_FOLDER')           OR define('GRAPHICFONT_FOLDER', 'graphics/');
-defined('WORDCLOUD_FOLDER')             OR define('WORDCLOUD_FOLDER', 'wordclouds/');
-defined('SHOW_EXCEPTION')               OR define('SHOW_EXCEPTION', true);
-defined('PAGINATION_MAX_ROW')           OR define('PAGINATION_MAX_ROW', 10);
+defined('WORDCLOUD_FOLDER')            OR define('WORDCLOUD_FOLDER', 'wordclouds/');
 
-/**
- * Store's Installation Global Constants
- * CHANGED AT INSTALLATION TIME
- */
+/*
+|--------------------------------------------------------------------------
+| Store's Installation Global Constants
+|--------------------------------------------------------------------------
+|
+| IMPORTANT: Make sure that your Store's API keys are setup correctly incl. the URL 
+*/
 defined('STORE_NAME')                   OR define('STORE_NAME', 'Woocommerce');
 defined('STORE_VERSION')                OR define('STORE_VERSION', 'v3x');
 defined('WC_API_URL')                   OR define('WC_API_URL', 'http://18.188.71.224/stores/woocommerce/');
@@ -73,23 +73,27 @@ defined('WC_API_CS')                    OR define('WC_API_CS', 'cs_c19b5120a54e2
 defined('WC_API_VER')                   OR define('WC_API_VER', 'wc/v3');
 defined('WC_API_SECURE')                OR define('WC_API_SECURE', false);
 
-/**
-* For managing slashes in both windows ans linux
-* Keep the slash as \\ for windows and for Linus keep it as
+/*
+|--------------------------------------------------------------------------
+| Directory Separation for different OS
+|--------------------------------------------------------------------------
 */
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
     // For Windows System configs
-    defined('SLASH') OR define('SLASH', '\\');
+    defined('SEPARATOR') OR define('SEPARATOR', '\\');
 } else {
-    // For ;linux System configs
-    defined('SLASH') OR define('SLASH', '/');
+    // For Linux System configs
+    defined('SEPARATOR') OR define('SEPARATOR', '/');
 }
 
-/**
- * @info: HTTP ERROR CODE Mapping Constants
- * @author: tanmayap@riaxe.com
- * @date: 11 Sep 2019
- */
+/*
+|--------------------------------------------------------------------------
+| HTTP ERROR CODE Mapping Constants
+|--------------------------------------------------------------------------
+|
+| IMPORTANT: You should use correct HTTP codes to the constants or else it will
+|            show irrelevant output codes at frontend
+*/
 defined('AUTH_ERROR')                   OR define('AUTH_ERROR', 401);
 defined('OPERATION_OKAY')               OR define('OPERATION_OKAY', 200);
 defined('NO_DATA_FOUND')                OR define('NO_DATA_FOUND', 200);

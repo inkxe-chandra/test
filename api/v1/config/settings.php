@@ -4,20 +4,14 @@
  | Global Configuration for the Application
  |--------------------------------------------------------------------------
  */
+$databaseSettings = require RELATIVE_PATH . 'config/database.php';
+
 return [
     'settings' => [
         'displayErrorDetails' => true, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
-        'db' => [
-            'driver'    => 'mysql',
-            'host'      => 'localhost',
-            'database'  => 'fonts',
-            'username'  => 'root',
-            'password'  => '',
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-        ],
+        'show_exception' => true,
+        'db' => $databaseSettings,
         // Renderer settings
         'renderer' => [
             'template_path' => __DIR__ . '/../app/Views/',
@@ -31,7 +25,8 @@ return [
             'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/app.log',
             'level' => \Monolog\Logger::DEBUG,
         ],
-        'do_load_jwt' => false,
-        'custom_loader_directory' => 'Custom'
+        'do_load_jwt' => false, // Enable or Disable JWT Authentication
+        'custom_loader_directory' => 'Custom',
+        
     ],
 ];
