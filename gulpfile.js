@@ -7,11 +7,11 @@ var Prompt = require('prompt-checkbox');
 const envsettings = {};
 var fs = require('fs');
 var gulpCopy = require('gulp-copy');
-var countFiles = require('count-files');
 var filenames = require("gulp-filenames");
 var pad = require('pad-number');
 var rename = require("gulp-rename");
 const Postgrator = require('postgrator');
+const directoryExists = require('directory-exists');
 
 function gulp_init_settings(cb) {
     envsettings.data = JSON.parse(fs.readFileSync('./envsettings.json'));
@@ -228,7 +228,31 @@ function create_basic_sql(cb) {
     cb();
 }
 
-exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets);
+function inkxe_admin(cb) {
+    directoryExists(envsettings.data.project_path + '/inkxe10-designer-admin', (error, result) => {
+        if (result === true) {
+            return exec2(envsettings.data.command_prefix + ' cd ' + envsettings.data.project_path + '/inkxe10-designer-admin &&' + envsettings.data.command_prefix + 'ng build --baseHref=./ --crossOrigin=anonymous --deleteOutputPath=true --deployUrl=./ --extractLicenses=false --lazyModules --optimization=true --outputHashing=none --prod=true --outputPath=../xetool/admin --resourcesOutputPath=./assets/fonts/', function(err, stdout, stderr) {
+                console.log(stdout);
+                console.log(stderr);
+            });
+        } else {
+            console.log("Inkxe-X Designer Admin Is Not Present.");
+        }
+    });
+    cb();
+}
+
+function copy_inkxe_to_package(cb) {
+    var path = process.cwd();
+    console.log(path);
+    return exec2(envsettings.data.command_prefix + ' cp -a ' + envsettings.data.project_path + '/inkxe10-designer-admin/dist/inkxe10-designer-admin/.' + ' ' + envsettings.data.project_path + "/" + envsettings.data.production_path + '/', function(err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+    });
+    cb();
+}
+
+exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets, inkxe_admin);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
 exports.stopxedocker = series(gulp_init_settings, stopxedocker);
