@@ -1,10 +1,27 @@
 {
+	"name": "product-designer-inkxe-10",
+	"private": true,
+	"version": "0.0.0-ignored",
 	"devDependencies": {
 		"child_process": "^1.0.2",
 		"gulp": "^4.0.2",
 		"gulp-concat": "^2.6.1",
 		"gulp-copy": "^4.0.1",
 		"gulp-exec": "^4.0.0",
-		"gulp-sourcemaps": "^2.6.5"
+		"gulp-filenames": "^4.0.1",
+		"gulp-prompt": "^1.2.0",
+		"gulp-rename": "^2.0.0",
+		"gulp-sourcemaps": "^2.6.5",
+		"pad-number": "0.0.4",
+		"postgrator": "^3.11.0",
+		"prompt-checkbox": "^2.2.0"
+	},
+	"dependencies": {
+		"gulp-filelist": "^2.0.3",
+		"mysql": "^2.17.1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:riaxe/inkxe10-env.git"
 	}
 }
