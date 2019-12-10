@@ -1,8 +1,8 @@
 {
-	"command_prefix":"",
-	"project_path":"D:\/inkxe10",
-	"production_path":"xetool",
-	"db_host":"localhost",
+	"command_prefix": "",
+	"project_path": "C:\/xampp72/htdocs/api_git",
+	"production_path": "xetool",
+	"db_host": "localhost",
 	"db_user": "root",
 	"db_password": ""
-	}
+}

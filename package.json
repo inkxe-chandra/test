@@ -23,6 +23,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:riaxe/inkxe10-env.git"
+		"url": "git@github.com:riaxe/inkxe10-env.git",
+		"gulp-sourcemaps": "^2.6.5"
+	},
+	"dependencies": {
+		"gulp-cli": "^2.2.0"
 	}
 }

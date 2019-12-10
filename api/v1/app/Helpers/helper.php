@@ -118,27 +118,6 @@
         return $mailResponse;
     }
 
-    function showException() {
-        $setting = include RELATIVE_PATH . 'config/settings.php';
-        return $setting['settings']['show_exception'];
-    }
-
-    function json_clean_decode($json, $assoc = false, $depth = 512, $options = 0) {
-        // search and remove comments like /* */ and //
-        $json = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
-       
-        if(version_compare(phpversion(), '5.4.0', '>=')) {
-            $json = json_decode($json, $assoc, $depth, $options);
-        }
-        elseif(version_compare(phpversion(), '5.3.0', '>=')) {
-            $json = json_decode($json, $assoc, $depth);
-        }
-        else {
-            $json = json_decode($json, $assoc);
-        }
-    
-        return $json;
-    }
     /**
      * @info: Get dynamic read/write path for modules
      * @input: read/write, module_name
@@ -177,33 +156,11 @@
     function storeId($request) {
         $conditions = [];
         $getStoreId = getDefaultStoreId();
-        if(!empty($getStoreId) && $getStoreId > 0) {
-            $conditions['store_id'] = $getStoreId;
-        } else {
-            $conditions = [];
-        }
-        /*$conditions = [];
-        // option 1
-        $getStoreId = $request->getQueryParam('store');
-        // option 2
-        $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
-        // option 3
-        $initStoreProduct = new StoreProduct();
-        $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
-        if(!empty($getStoreId) && $getStoreId > 0) {
-            $conditions['store_id'] = $getStoreId;
-        } else if(!empty($postStoreId) && $postStoreId > 0) {
-            $conditions['store_id'] = $postStoreId;
-        } else if(!empty($putStoreId) && $putStoreId > 0) {
-            $conditions['store_id'] = $putStoreId;
-        } else {
-            $getStoreId = getDefaultStoreId();
-            if(!empty($getStoreId) && $getStoreId > 0) {
-                $conditions['store_id'] = $getStoreId;
-            } else {
-                $conditions = [];
-            }
-        }*/
+		if(!empty($getStoreId) && $getStoreId > 0) {
+			$conditions['store_id'] = $getStoreId;
+		} else {
+			$conditions = [];
+		}
         return $conditions;
     }
     /**
@@ -267,7 +224,6 @@
         if(isset($moduleName)) {
             $messages = [
                 'saved' => "[MODULE] was saved into application",
-                'clone' => "Record was cloned successfully",
                 'done' => 'The last operation was successfull',
                 'updated' => "[MODULE] was updated successfully",
                 'deleted' => "[MODULE] was deleted permanently from system",
@@ -380,7 +336,6 @@
         }
     }
 
-    
     /**
      * @info: It will convert a long text into a short text with a elipse dots
      * @input: long string

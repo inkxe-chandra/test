@@ -15,7 +15,7 @@ defined('XE_ENV') OR define('XE_ENV', 'development');
  |--------------------------------------------------------------------------
  | 
  */
-defined('WORKING_DIR') OR define('WORKING_DIR', '/api/v2/');
+defined('WORKING_DIR') OR define('WORKING_DIR', '/api_git/xetool/api/v1/');
 
 
 /*
@@ -37,8 +37,8 @@ defined('BASE_URL')                     OR define('BASE_URL', $domainUrl . WORKI
 | IMPORTANT: Assets folder contains all the module's corresponding fodlers and sub-folders. 
 |            Make sure that all the module's folders are setup correctly
 */
-defined('ASSETS_PATH_W')                OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api/assets/');
-defined('ASSETS_PATH_R')                OR define('ASSETS_PATH_R', $domainUrl . '/api/assets/');
+defined('ASSETS_PATH_W')                OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api_git/xetool/api/assets/');
+defined('ASSETS_PATH_R')                OR define('ASSETS_PATH_R', $domainUrl . '/api_git/xetool/api/assets/');
 
 // Modules Folders
 defined('EXTRACTED_FOLDER')             OR define('EXTRACTED_FOLDER', 'extracted/');
@@ -53,10 +53,11 @@ defined('FONT_FOLDER')                  OR define('FONT_FOLDER', 'fonts/');
 defined('SHAPE_FOLDER')                 OR define('SHAPE_FOLDER', 'shapes/');
 defined('DISTRESS_FOLDER')              OR define('DISTRESS_FOLDER', 'distresses/');
 defined('COLOR_FOLDER')                 OR define('COLOR_FOLDER', 'colors/');
-defined('BACKGROUNDPATTERN_FOLDER')     OR define('BACKGROUNDPATTERN_FOLDER', 'patterns/');
+defined('BACKGROUND_FOLDER')            OR define('BACKGROUND_FOLDER', 'patterns/');
 defined('MASK_FOLDER')                  OR define('MASK_FOLDER', 'masks/');
 defined('GRAPHICFONT_FOLDER')           OR define('GRAPHICFONT_FOLDER', 'graphics/');
-defined('WORDCLOUD_FOLDER')            OR define('WORDCLOUD_FOLDER', 'wordclouds/');
+defined('WORDCLOUD_FOLDER')             OR define('WORDCLOUD_FOLDER', 'wordclouds/');
+defined('ORDER_FOLDER')                 OR define('ORDER_FOLDER', 'orders/');
 
 /*
 |--------------------------------------------------------------------------
