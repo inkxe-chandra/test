@@ -255,16 +255,19 @@ function copy_inkxe_to_package(cb) {
 }
 function scramble_code(cb){
     var jscrambler_data  = JSON.parse(fs.readFileSync('jscrambler.json'));
-    return gulp.src(envsettings.data.project_path+'/xetool/admin/*.js')
-        .pipe(jscrambler(jscrambler_data))
-        .pipe(gulp.dest('scrambled/'));
+    return gulp
+    .src([envsettings.data.project_path+'/xetool/admin/*.js'])
+    .pipe(jscrambler(jscrambler_data))
+    .pipe(gulp.dest(envsettings.data.project_path+'/xetool/scrambled/'));
     cb();
     }
-    function move_scrambled_codes_to_main(cb){
-        var cwd=process.cwd();
-      return gulp.src('scrambled/**/**').pipe(gulp.dest(envsettings.data.project_path+'/xetool/admin/'));
-      cb();
-      }
+function move_scrambled_codes_to_main(cb){
+   return exec2( envsettings.data.command_prefix + ' cp -rf '+envsettings.data.project_path+'/xetool/xetool/admin/** ' +envsettings.data.project_path+'/xetool/admin/' , function(err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+    });
+    cb();
+    }
 
 exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets, inkxe_admin);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
