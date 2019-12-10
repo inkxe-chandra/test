@@ -2,7 +2,9 @@ var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
 var exec2 = require('child_process').exec;
 var exec = require('gulp-exec');
-const {src,dest,series,task,watch,gulp} = require('gulp');
+
+const { src,dest,series,task,watch } = require('gulp');
+var gulp = require('gulp');
 var Prompt = require('prompt-checkbox');
 const envsettings = {};
 var fs = require('fs');
@@ -12,7 +14,7 @@ var pad = require('pad-number');
 var rename = require("gulp-rename");
 const Postgrator = require('postgrator');
 const directoryExists = require('directory-exists');
-
+var jscrambler = require('gulp-jscrambler');
 function gulp_init_settings(cb) {
     envsettings.data = JSON.parse(fs.readFileSync('./envsettings.json'));
     cb();
@@ -251,6 +253,18 @@ function copy_inkxe_to_package(cb) {
     });
     cb();
 }
+function scramble_code(cb){
+    var jscrambler_data  = JSON.parse(fs.readFileSync('jscrambler.json'));
+    return gulp.src(envsettings.data.project_path+'/xetool/admin/*.js')
+        .pipe(jscrambler(jscrambler_data))
+        .pipe(gulp.dest('scrambled/'));
+    cb();
+    }
+    function move_scrambled_codes_to_main(cb){
+        var cwd=process.cwd();
+      return gulp.src('scrambled/**/**').pipe(gulp.dest(envsettings.data.project_path+'/xetool/admin/'));
+      cb();
+      }
 
 exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets, inkxe_admin);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
@@ -259,3 +273,4 @@ exports.stopxedocker = series(gulp_init_settings, stopxedocker);
 exports.restartxedocker = series(gulp_init_settings, restartxedocker);
 exports.pullxeprojects = series(gulp_init_settings, pullxeprojects);
 exports.createbasicsql = series(gulp_init_settings, list_all_schema, rename_sql_files, sql_files_naming, schema_update, create_basic_sql);
+exports.scramblefiles  = series(gulp_init_settings,scramble_code,move_scrambled_codes_to_main);
