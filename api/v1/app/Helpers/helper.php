@@ -118,6 +118,62 @@
         return $mailResponse;
     }
 
+    function showException() {
+        $setting = include RELATIVE_PATH . 'config/settings.php';
+        return $setting['settings']['show_exception'];
+    }
+
+    /**
+     * A Custom json_decode function which will remove extra comments and decode to array
+     */
+    function json_clean_decode($json, $assoc = false, $depth = 512, $options = 0) {
+        // search and remove comments like /* */ and //
+        $json = preg_replace("#(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)|([\s\t]//.*)|(^//.*)#", '', $json);
+        if(version_compare(phpversion(), '5.4.0', '>=')) {
+            $json = json_decode($json, $assoc, $depth, $options);
+        }
+        elseif(version_compare(phpversion(), '5.3.0', '>=')) {
+            $json = json_decode($json, $assoc, $depth);
+        }
+        else {
+            $json = json_decode($json, $assoc);
+        }
+        return $json;
+    }
+    /**
+     * Read and Store Logs
+     * @param: Logging Flag Type : DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY
+     * @param: $logData : It contains all the message and extra informations
+     * @example: createLog('file', 'info', ['message' => 'This is a test file Delete info', 'extra' => ['module' => 'Template', 'file_name' => '213353459890.png', 'directory' => 'assets/template']]);
+     * @return: boolean
+     */
+    function createLog($type = 'activity', $flagType = 'info', $logData = []) {
+        if(!empty($type) && $type != "" && isset($logData) && count($logData) > 0) {
+            $logFileName = $type . '_logs.json';
+            $logger = new \Monolog\Logger('inkxe_logger');
+            $formatter = new \Monolog\Formatter\JsonFormatter();
+            $fileHandler = new \Monolog\Handler\StreamHandler(RELATIVE_PATH . 'logs/' . $logFileName);
+            $fileHandler->setFormatter($formatter);
+            $logger->pushHandler($fileHandler);
+            if($logger->{$flagType}($logData['message'], $logData['extra'])) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    /**
+     * Get the Log file contents and use it
+     */
+    function readLogs($type = 'activity') {
+        $logFileName = 'logs.json';
+        if(!empty($type) && $type != "") {
+            $logFileName = $type . '_' . 'logs.json';
+        }
+        $logPath = RELATIVE_PATH . 'logs/' . $logFileName;
+        $getLinedLogJsonObjects = file($logPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        return $getLinedLogJsonObjects;
+    }
     /**
      * @info: Get dynamic read/write path for modules
      * @input: read/write, module_name
@@ -156,11 +212,33 @@
     function storeId($request) {
         $conditions = [];
         $getStoreId = getDefaultStoreId();
-		if(!empty($getStoreId) && $getStoreId > 0) {
-			$conditions['store_id'] = $getStoreId;
-		} else {
-			$conditions = [];
-		}
+        if(!empty($getStoreId) && $getStoreId > 0) {
+            $conditions['store_id'] = $getStoreId;
+        } else {
+            $conditions = [];
+        }
+        /*$conditions = [];
+        // option 1
+        $getStoreId = $request->getQueryParam('store');
+        // option 2
+        $postStoreId = !empty($request->getParsedBody()['store_id']) ? $request->getParsedBody()['store_id'] : null;
+        // option 3
+        $initStoreProduct = new StoreProduct();
+        $putStoreId = !empty($initStoreProduct->parsePut()['store_id']) ? $initStoreProduct->parsePut()['store_id'] : null;
+        if(!empty($getStoreId) && $getStoreId > 0) {
+            $conditions['store_id'] = $getStoreId;
+        } else if(!empty($postStoreId) && $postStoreId > 0) {
+            $conditions['store_id'] = $postStoreId;
+        } else if(!empty($putStoreId) && $putStoreId > 0) {
+            $conditions['store_id'] = $putStoreId;
+        } else {
+            $getStoreId = getDefaultStoreId();
+            if(!empty($getStoreId) && $getStoreId > 0) {
+                $conditions['store_id'] = $getStoreId;
+            } else {
+                $conditions = [];
+            }
+        }*/
         return $conditions;
     }
     /**
@@ -224,6 +302,7 @@
         if(isset($moduleName)) {
             $messages = [
                 'saved' => "[MODULE] was saved into application",
+                'clone' => "Record was cloned successfully",
                 'done' => 'The last operation was successfull',
                 'updated' => "[MODULE] was updated successfully",
                 'deleted' => "[MODULE] was deleted permanently from system",
@@ -336,6 +415,7 @@
         }
     }
 
+    
     /**
      * @info: It will convert a long text into a short text with a elipse dots
      * @input: long string
