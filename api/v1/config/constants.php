@@ -37,8 +37,8 @@ defined('BASE_URL')                     OR define('BASE_URL', $domainUrl . WORKI
 | IMPORTANT: Assets folder contains all the module's corresponding fodlers and sub-folders. 
 |            Make sure that all the module's folders are setup correctly
 */
-defined('ASSETS_PATH_W')                OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api_git/xetool/api/assets/');
-defined('ASSETS_PATH_R')                OR define('ASSETS_PATH_R', $domainUrl . '/api_git/xetool/api/assets/');
+defined('ASSETS_PATH_W')                OR define('ASSETS_PATH_W', $_SERVER['DOCUMENT_ROOT'] . '/api_git/xetool/assets/');
+defined('ASSETS_PATH_R')                OR define('ASSETS_PATH_R', $domainUrl . '/api_git/xetool/assets/');
 
 // Modules Folders
 defined('EXTRACTED_FOLDER')             OR define('EXTRACTED_FOLDER', 'extracted/');
