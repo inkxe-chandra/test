@@ -58,6 +58,7 @@ defined('MASK_FOLDER')                  OR define('MASK_FOLDER', 'masks/');
 defined('GRAPHICFONT_FOLDER')           OR define('GRAPHICFONT_FOLDER', 'graphics/');
 defined('WORDCLOUD_FOLDER')             OR define('WORDCLOUD_FOLDER', 'wordclouds/');
 defined('ORDER_FOLDER')                 OR define('ORDER_FOLDER', 'orders/');
+defined('LANGUAGE_FOLDER')              OR define('LANGUAGE_FOLDER', 'languages/');
 
 /*
 |--------------------------------------------------------------------------
