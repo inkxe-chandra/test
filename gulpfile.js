@@ -193,10 +193,10 @@ function remove_unwanted_sql(cb) {
 }
 
 function schema_update(cb) {
-    var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
+    var db_password =envsettings.data.db_password;
     const postgrator = new Postgrator({
         // Directory containing migration files
-        migrationDirectory: '../schema',
+        migrationDirectory: '../out',
         validateChecksums: false, // Set to false to skip validation
         // newline: 'CRLF', // Force using 'CRLF' (windows) or 'LF' (unix/mac)
         // or a glob pattern to files
@@ -278,6 +278,8 @@ function resetenv(cb){
 }
 function exec_drop_basic_db(cb){
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;       
+console.log(envsettings.data.command_prefix+' '+envsettings.data.mysql_path+'mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";');
+
     return exec2(envsettings.data.command_prefix+' '+envsettings.data.mysql_path+'mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";', 
         function (err, stdout, stderr) {
         console.log(stdout);
