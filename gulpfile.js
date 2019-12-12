@@ -267,7 +267,7 @@ function move_scrambled_codes_to_main(cb){
         console.log(stderr);
     });
     cb();
-    }
+}
 function resetenv(cb){
     var platform = os.platform() === 'linux' ? 'ubuntu' : (
         os.platform() === 'darwin' ? 'mac' : (
@@ -275,13 +275,31 @@ function resetenv(cb){
         console.log(platform);
         return gulp.src('localsettings_'+ platform + '.json').pipe(concat('envsettings.json')).pipe(gulp.dest('./'));
     cb(); 
-    }
+}
+function exec_drop_basic_db(cb){
+    var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;       
+    return exec2(envsettings.data.command_prefix+' '+envsettings.data.mysql_path+'mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";', 
+        function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);    
+    });
+    cb();
+}
+function exec_create_basic_db(cb){
+    var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
+    return exec2(envsettings.data.command_prefix+' '+envsettings.data.mysql_path+'mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "CREATE DATABASE IF NOT EXISTS xe_install_db_inkxe_10";', 
+        function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);    
+    });
+    cb();
+}
 exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets, inkxe_admin);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
 exports.stopxedocker = series(gulp_init_settings, stopxedocker);
 exports.restartxedocker = series(gulp_init_settings, restartxedocker);
 exports.pullxeprojects = series(gulp_init_settings, pullxeprojects);
-exports.createbasicsql = series(gulp_init_settings, list_all_schema, rename_sql_files, sql_files_naming, schema_update, create_basic_sql);
+exports.createbasicsql = series(gulp_init_settings,exec_drop_basic_db, list_all_schema,exec_create_basic_db, rename_sql_files, sql_files_naming, schema_update, create_basic_sql);
 exports.scramblefiles  = series(gulp_init_settings,scramble_code,move_scrambled_codes_to_main);
-exports.resetenv         = series(resetenv);
+exports.resetenv       = series(resetenv);
