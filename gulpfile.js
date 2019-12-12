@@ -2,7 +2,7 @@ var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
 var exec2 = require('child_process').exec;
 var exec = require('gulp-exec');
-
+var os = require('os');
 const { src,dest,series,task,watch } = require('gulp');
 var gulp = require('gulp');
 var Prompt = require('prompt-checkbox');
@@ -268,7 +268,14 @@ function move_scrambled_codes_to_main(cb){
     });
     cb();
     }
-
+function resetenv(cb){
+    var platform = os.platform() === 'linux' ? 'ubuntu' : (
+        os.platform() === 'darwin' ? 'mac' : (
+        os.platform() === 'win32' ? 'win' : 'win'));
+        console.log(platform);
+        return gulp.src('localsettings_'+ platform + '.json').pipe(concat('envsettings.json')).pipe(gulp.dest('./'));
+    cb(); 
+    }
 exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets, inkxe_admin);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
@@ -277,3 +284,4 @@ exports.restartxedocker = series(gulp_init_settings, restartxedocker);
 exports.pullxeprojects = series(gulp_init_settings, pullxeprojects);
 exports.createbasicsql = series(gulp_init_settings, list_all_schema, rename_sql_files, sql_files_naming, schema_update, create_basic_sql);
 exports.scramblefiles  = series(gulp_init_settings,scramble_code,move_scrambled_codes_to_main);
+exports.resetenv         = series(resetenv);
