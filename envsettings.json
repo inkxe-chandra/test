@@ -1,8 +1,0 @@
-{
-	"command_prefix": "sudo",
-	"project_path": "/var/www/inkxe10",
-	"production_path": "xetool",
-	"db_host": "localhost",
-	"db_user": "root",
-	"db_password": "Password123"
-}
