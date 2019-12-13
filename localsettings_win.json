@@ -1,18 +1,10 @@
 {
-
-	"revision_number":1,
-	"print_type_id":"4",
-	"first_product_id": 2,
-	"host":"dev.inkxe.com",
-	"protocol":"http",
-	"dev_os":"Windows",
-	"dev_store_root":"d:/xeprojects/",
-	"mysql_path":"d:/xamp/mysql/bin/",
-	"command_prefix":"",
-	"host_file_path":"C:/Windows/System32/drivers/etc/hosts",
-	"vhost_settings_path": "D:/xamp/apache/conf/extra/httpd-vhosts.conf",
-	"db_host":"localhost",
+	"command_prefix": "sudo",
+	"project_path": "/var/www/inkxe10",
+	"production_path": "xetool",
+	"db_host": "localhost",
 	"db_user": "root",
-	"db_password": "",
-	"modules":["background", "backgroundPattern","curveText","design","distressEffect","handDrawing","imageEdit","plainText","qrCode","quote","reduceColor","shape","template","textArt","textFX","textInShape","textOnPath","wordCloud","myImage","templateLocking","nameNumber","templateEditForm","imageSettings","preview3D","bulkOrder","vdp","quoteRequest","productConfigurator"]
+	"db_password": "Password123",
+	"modules":["inkxe10-backgrounds inkxe10-decoration-area inkxe10-distress inkxe10-fonts inkxe10-shapes inkxe10-cliparts inkxe10-designer-admin inkxe10-env inkxe10-settings inkxe10-uploadImage"]
 }
+                                            
