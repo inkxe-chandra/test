@@ -29,6 +29,60 @@
     use App\Components\Component;
 
     /**
+     * Handle Multiple File upload
+     */
+    function mutipleUpload($fileName, $uploadPath, $thumb = false) {
+        $uploadedFileList = [];
+        $enabledThumbImageFormats = ['jpeg', 'jpg', 'gif', 'png'];
+        $convertToSize = [150];
+        // Count # of uploaded files in array
+        $totalFilesCount = count($_FILES[$fileName]['name']);
+        // Loop through each file
+        for( $i=0 ; $i < $totalFilesCount; $i++ ) {
+            //Get the temp file path
+            $tmpFilePath = $_FILES[$fileName]['tmp_name'][$i];
+            //Make sure we have a file path
+            if ($tmpFilePath != ""){
+                //Setup our new file path
+                $uploadPath = isset($uploadPath) ? $uploadPath : UPLOAD_FOLDER;
+                if (!is_dir($uploadPath)) {
+                    mkdir($uploadPath, 0777, true);
+                }
+                $fileExtension = pathinfo($_FILES[$fileName]['name'][$i], PATHINFO_EXTENSION);
+                $random = getRandom();
+                $uploadFileName = $random . "." . $fileExtension;
+                $newFilePath = $uploadPath . $uploadFileName;
+                //Upload the file into the temp dir
+                if(copy($tmpFilePath, $newFilePath)) {
+                    $fileToProcess = $uploadPath . $uploadFileName;
+                    $uploadedFileList[$i] = $uploadFileName;
+                    // Image Uploaded. Write any operations if required --
+                    if(isset($thumb) && $thumb === true) {
+                        if(isset($fileExtension) && in_array($fileExtension, $enabledThumbImageFormats)) {
+                            $img = \Intervention\Image\ImageManagerStatic::make($fileToProcess);
+                            foreach ($convertToSize as $dimension) {
+                                $img->resize($dimension, $dimension);
+                                $img->save($uploadPath . 'thumb_' . $uploadFileName);
+                            }
+                        }
+                    }
+                   // 
+                }
+            }
+        }
+
+        return $uploadedFileList;;
+    }
+
+    function getAppSettings($settingKey = "") {
+        if(!empty($settingKey) && $settingKey != "") {
+            $setting = include RELATIVE_PATH . 'config/settings.php';
+            return $setting['settings'][$settingKey];
+        } else {
+            return false;
+        }
+    }
+    /**
      * @info: Get dynamic read/write path for modules
      * @input: read/write, module_name
      * @created: 09 sep 2019
@@ -247,7 +301,7 @@
     function getDefaultStoreId()
     {
         $getStoreSetting = storeSettings();
-        return $getStoreSetting['active_store_id'];
+        return 1;// $getStoreSetting['active_store_id'];
     }
 
     /**

@@ -25,29 +25,9 @@ use Intervention\Image\ImageManagerStatic as ImageManager;
 
 abstract class Component {
 
-    protected $c;
-    protected $key;
-    /**
-     * the object of ContainerInterface is created and set the object to a variable &c and distributes all over the classes
-     * @input: ContainerInterface's object
-     * 
-     * Monolog: We use a plugin Monolog for logging all the logs. So here Monolog is instantiated and 
-     * all the configurations are set inside the constructer
-     */
-    public function __construct(ContainerInterface $c) {
-        $this->c = $c;
+    public function __construct() {
         // Set a secure hash salt key for Encryption methods
         $this->secret = "SgUkXp2s5v8y/B?E(H+MbQeThWmYq3t6w9z^C&F)J@NcRfUjXn2r4u7x!A%D*G-K";
-
-        // Set up Logger to use in Controller
-        $logger = new \Monolog\Logger('inkxe_logger');
-        $formatter = new \Monolog\Formatter\JsonFormatter();
-        $fileHandler = new \Monolog\Handler\StreamHandler(RELATIVE_PATH . 'logs/logs.json');
-        $fileHandler->setFormatter($formatter);
-        $logger->pushHandler($fileHandler);
-        $this->logger = $logger;
-
-        $this->datetime = \Carbon\Carbon::now()->toDateTimeString();
     }
     
     /**
@@ -137,41 +117,31 @@ abstract class Component {
     }
 
     /**
-     * - Carbon: The Carbon class is inherited from the PHP DateTime class.
-     * - Carbon is used by Eloquent exclusively
-     * 
-     * - For Date and time operations, we use Carbon and this method uses Carbon to make all such operations
-     * Add, Subtract, get Current, yesterday, tomorrow etc using Carbon
-     * @author: tanmayap@riaxe.com
-     * @date: 13 aug 2019 
-     * @input: option, conditions[array|optional], format[string|optional]
+     * Load specific helper files from any Modules
      */
-    public function dateTimeOperations($option = 'current', $condition = [], $format = 'string') {
-        $dateReturn = '';
-        switch ($option) {
-            case 'today':
-                $dateReturn = \Carbon\Carbon::now();
-                break;
-            case 'tomorrow':
-                $dateReturn = \Carbon\Carbon::tomorrow();
-                break;
-            case 'add':
-                $dt = \Carbon\Carbon::now();
-                $dateReturn = $dt->addDays($condition['days']);
-                break;
-            case 'sub':
-                $dt = \Carbon\Carbon::now();
-                $dateReturn = $dt->subDays($condition['days']);
-                break;
-            default:
-                //
-                break;
+    public function loadHelper($slug = '') {
+        if ($slug != '') {
+            $dir = RELATIVE_PATH . 'app/Helpers/';
+            $helperFile = $slug . '_helper.php';
+            if (file_exists($dir . $helperFile)) {
+                require_once $dir . $helperFile;
+            }
         }
-        if ($format == 'string') {
-            return $dateReturn->toDateTimeString();
-        } else if($format == 'timestamp') {
-            return $dateReturn->timestamp;
+    }
+    /**
+     * Get Category and Subcategory List of Assets Modules
+     * Used for Print Profile Module
+     */
+    public function getAssetCategories($slug = '') {
+        $categories = [];
+        if ($slug != '') {
+            $assetType = DB::table('asset_types')->where('slug', $slug)->first();
+            if (!empty($assetType)) {
+                $assetTypeId = $assetType->xe_id;
+                $categories = DB::table('categories')->where('asset_type_id', $assetTypeId)->get();
+            }
         }
+        return $categories;
     }
 
     /**
@@ -198,30 +168,31 @@ abstract class Component {
      * @author: tanmayap@riaxe.com
      * @return: file name of uploaded file
      */
-    public function saveFile($fileName = "", $file_path)
-    {
+    public function saveFile($fileName = "", $file_path) {
         if(!empty($fileName)) {
             if(isset($_FILES) && count($_FILES) > 0) {
                 $enabledThumbImageFormats = ['jpeg', 'jpg', 'gif', 'png'];
-                $convertToSize = [100];
+                $convertToSize = [150];
                 $uploadPath = isset($file_path) ? $file_path : UPLOAD_FOLDER;
                 if (!is_dir($uploadPath)) {
                     mkdir($uploadPath, 0777, true);
                 } 
-                $fileExtension = pathinfo($_FILES[$fileName]['name'], PATHINFO_EXTENSION);
-                $random = getRandom();
-                $uploadFileName = $random . "." . $fileExtension;
-                if (copy($_FILES[$fileName]['tmp_name'], $uploadPath . $uploadFileName) === true) {
-                    // Image Uploaded. Write any operations if required --
-                    if(isset($fileExtension) && in_array($fileExtension, $enabledThumbImageFormats)) {
-                        $fileToProcess = $uploadPath . $uploadFileName;
-                        $img = ImageManager::make($fileToProcess);
-                        foreach ($convertToSize as $dimension) {
-                            $img->resize($dimension, $dimension);
-                            $img->save($uploadPath . 'thumb_' . $random . "." . $fileExtension);
+                if(!empty($_FILES[$fileName]['name']) && $_FILES[$fileName]['name'] != "") {
+                    $fileExtension = pathinfo($_FILES[$fileName]['name'], PATHINFO_EXTENSION);
+                    $random = getRandom();
+                    $uploadFileName = $random . "." . $fileExtension;
+                    if (copy($_FILES[$fileName]['tmp_name'], $uploadPath . $uploadFileName) === true) {
+                        // Image Uploaded. Write any operations if required --
+                        if(isset($fileExtension) && in_array($fileExtension, $enabledThumbImageFormats)) {
+                            $fileToProcess = $uploadPath . $uploadFileName;
+                            $img = ImageManager::make($fileToProcess);
+                            foreach ($convertToSize as $dimension) {
+                                $img->resize($dimension, $dimension);
+                                $img->save($uploadPath . 'thumb_' . $random . "." . $fileExtension);
+                            }
                         }
+                        return $uploadFileName;
                     }
-                    return $uploadFileName;
                 }
             }
         }

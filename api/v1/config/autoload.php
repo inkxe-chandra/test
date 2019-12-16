@@ -20,13 +20,14 @@ $modules = require RELATIVE_PATH . '/config/modules.php';
 $custom_loader_directory = $container->get('settings')['custom_loader_directory'];
 foreach($modules as $module => $status) {
     if(isset($status) && count($status) > 0) {
-        if(isset($status) && $status['CORE'] === true) {
-            $routeFilePath = RELATIVE_PATH . '/app/Modules/'. $module . '/index.php';
+        if(isset($status) && $status['CORE'] === 1) {
+            $routeFilePath = RELATIVE_PATH . 'app/Modules/'. $module . '/index.php';
             require $routeFilePath;
-        } else if(isset($status) && $status['CUSTOM'] === true) {
-            $routeFilePath = RELATIVE_PATH . '/app/' . $custom_loader_directory . '/' . $module . '/index.php';
+        } else if(isset($status) && $status['CUSTOM'] === 1) {
+            $routeFilePath = RELATIVE_PATH . 'app/' . $custom_loader_directory . '/' . $module . '/index.php';
             require $routeFilePath;
         }
     }
 }
+//echo "I AM HERE"; exit;
 //End of registration of routes

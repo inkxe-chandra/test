@@ -30,18 +30,19 @@ class ValidateJWTToken extends ParentController {
      */
     public function __invoke($request, $response, $next)
     {
-        $doAllowJWT = $this->c->get('settings')['do_load_jwt'];
+        $doAllowJWT = getAppSettings('do_load_jwt');
         $headerResponse = [];
-        $headers = apache_request_headers();
+        $serverStatusCode = OPERATION_OKAY;
+        $headers = $this->server_request_headers();
         // Easily turn on/off JWT from config
         if($doAllowJWT === false) {
             return $next($request, $response);
         }
-        if(isset($headers['token']) && $headers['token'] != '' && $doAllowJWT === true) {
+        if(isset($headers['TOKEN']) && $headers['TOKEN'] != '' && $doAllowJWT === true) {
             // Handle JWT Exception with try catch
             try {
                 // Get the token value from Bearer string
-                $tokenWithBearer = explode(" ", $headers['token']);
+                $tokenWithBearer = explode(" ", $headers['TOKEN']);
                 $token = (isset($tokenWithBearer[1]) && $tokenWithBearer[1] != "") ? $tokenWithBearer[1] : null;
                 
                 $secret = $this->secret;
@@ -56,20 +57,34 @@ class ValidateJWTToken extends ParentController {
 
                 $this->logger->addWarning('JWT Error Occured', $jwtResp, ['date' => date('Y-m-d h:i:s')]);
                 
-                return $this->c->response->withJson($jwtResp)
-                    ->withHeader('Access-Control-Allow-Origin', '*')
-                    ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-                    ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
+                return response($response, ['data' => $jwtResp, 'status' => $serverStatusCode]);
             } 
         } else {
             $jwtResp = [
                 'status' => 0,
                 'message' => 'Sorry, JWT token not found. Please provide a valid token'
             ];
-            return $this->c->response->withJson($jwtResp)
-                ->withHeader('Access-Control-Allow-Origin', '*')
-                ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-                ->withHeader('Access-Control-Allow-Methods', 'POST,GET');
+            return response($response, ['data' => $jwtResp, 'status' => $serverStatusCode]);
         }
     }
+    /**
+     * Fetch all HTTP request headers
+     */
+    private function server_request_headers() { 
+        $arrayOfHeader = array();
+        $rxHttp = '/\AHTTP_/';
+        foreach($_SERVER as $key => $server) {
+            if( preg_match($rxHttp, $key) ) {
+            $arrayOfHeaderKey = preg_replace($rxHttp, '', $key);
+            $rxMatches = array();
+            $rxMatches = explode('_', $arrayOfHeaderKey);
+            if( count($rxMatches) > 0 and strlen($arrayOfHeaderKey) > 2 ) {
+                foreach($rxMatches as $akKey => $akVal) $rxMatches[$akKey] = ucfirst($akVal);
+                $arrayOfHeaderKey = implode('-', $rxMatches);
+            }
+            $arrayOfHeader[$arrayOfHeaderKey] = $server;
+            }
+        }
+        return( $arrayOfHeader );
+    } 
 }
