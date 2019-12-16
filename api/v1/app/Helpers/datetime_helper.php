@@ -3,6 +3,46 @@
     use Illuminate\Database\Capsule\Manager as DB;
     use Carbon\Carbon as Carbon;
     use App\Components\Component;
+	
+	/**
+     * - Carbon: The Carbon class is inherited from the PHP DateTime class.
+     * - Carbon is used by Eloquent exclusively
+     * 
+     * - For Date and time operations, we use Carbon and this method uses Carbon to make all such operations
+     * Add, Subtract, get Current, yesterday, tomorrow etc using Carbon
+     * @author: tanmayap@riaxe.com
+     * @date: 13 aug 2019 
+     * @input: option, conditions[array|optional], format[string|optional]
+     */
+    function dateTime($option = 'current', $condition = [], $format = 'string') {
+        $dateReturn = '';
+        switch ($option) {
+            case 'today':
+                $dateReturn = \Carbon\Carbon::now();
+                break;
+            case 'tomorrow':
+                $dateReturn = \Carbon\Carbon::tomorrow();
+                break;
+            case 'add':
+                $dt = \Carbon\Carbon::now();
+                $dateReturn = $dt->addDays($condition['days']);
+                break;
+            case 'sub':
+                $dt = \Carbon\Carbon::now();
+                $dateReturn = $dt->subDays($condition['days']);
+                break;
+            default:
+                //
+                break;
+        }
+        if ($format == 'string') {
+            return $dateReturn->toDateTimeString();
+        } else if($format == 'timestamp') {
+            return $dateReturn->timestamp;
+        }
+    }
+	
+	
 
     /**
      * @info: Change date formats with the help of Carbon-Eloquent
