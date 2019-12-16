@@ -9,6 +9,15 @@ CREATE TABLE `settings` (
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1
 
 
+CREATE TABLE `languages` (
+  `xe_id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `file` varchar(50) DEFAULT NULL,
+  `type` tinyint(1) DEFAULT NULL,
+  `is_enable` tinyint(1) DEFAULT '0',
+  `is_default` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`xe_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1
 
 
 CREATE TABLE `categories` (
