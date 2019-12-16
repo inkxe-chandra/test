@@ -6,7 +6,7 @@ CREATE TABLE `settings` (
   `is_secure` tinyint(1) DEFAULT '0',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`xe_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `languages` (
@@ -17,7 +17,7 @@ CREATE TABLE `languages` (
   `is_enable` tinyint(1) DEFAULT '0',
   `is_default` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`xe_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `categories` (
@@ -32,7 +32,7 @@ CREATE TABLE `categories` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`xe_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `asset_types` (
@@ -40,7 +40,7 @@ CREATE TABLE `asset_types` (
   `name` varchar(100) NOT NULL,
   `slug` varchar(100) NOT NULL,
   PRIMARY KEY (`xe_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 
 --

@@ -163,7 +163,7 @@ function schema_update(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
     const postgrator = new Postgrator({
         // Directory containing migration files
-        migrationDirectory: '../schema',
+        migrationDirectory: '../out',
         validateChecksums: false, // Set to false to skip validation
         // newline: 'CRLF', // Force using 'CRLF' (windows) or 'LF' (unix/mac)
         // or a glob pattern to files
@@ -267,13 +267,13 @@ function update_build_modules(cb){
 });
     cb();
 }
-exports.xetool = series(gulp_init_settings, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets, inkxe_admin);
+exports.xetool = series(gulp_init_settings,list_all_schema,rename_sql_files, sql_files_naming, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets,exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
 exports.stopxedocker = series(gulp_init_settings, stopxedocker);
 exports.restartxedocker = series(gulp_init_settings, restartxedocker);
 exports.pullxeprojects = series(gulp_init_settings, pullxeprojects);
-exports.createbasicsql = series(gulp_init_settings,exec_drop_basic_db, list_all_schema,exec_create_basic_db, rename_sql_files, sql_files_naming, schema_update, create_basic_sql);
+exports.createbasicsql = series(gulp_init_settings,list_all_schema,rename_sql_files, sql_files_naming,exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql);
 exports.scramblefiles  = series(gulp_init_settings,scramble_code,move_scrambled_codes_to_main);
 exports.resetenv       = series(resetenv);
 exports.update_build_modules = series(gulp_init_settings,update_build_modules);

@@ -1,10 +1,10 @@
 {
-	"command_prefix": "sudo",
-	"project_path": "/var/www/inkxe10",
+	"command_prefix": "",
+	"mysql_path": "d:/xamp/mysql/bin/",
+	"project_path": "D:\/inkxe10",
 	"production_path": "xetool",
 	"db_host": "localhost",
 	"db_user": "root",
-	"db_password": "Password123",
+	"db_password": "",
 	"modules":["inkxe10-backgrounds inkxe10-decoration-area inkxe10-distress inkxe10-fonts inkxe10-shapes inkxe10-cliparts inkxe10-designer-admin inkxe10-env inkxe10-settings inkxe10-uploadImage"]
 }
-                                            
