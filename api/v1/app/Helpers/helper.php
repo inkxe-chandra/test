@@ -431,7 +431,12 @@
                             shell_exec('chmod -R 777 ' . $rawFileLocation);
                             $deleteCount++;
                             if(unlink($rawFileLocation)) {
-                                unlink($rawThumbFileLocation);
+                                if (file_exists($rawThumbFileLocation)) {
+                                    chmod($rawThumbFileLocation, 0755);
+                                    // For Linux System Below code will change the permission of the file
+                                    shell_exec('chmod -R 777 ' . $rawThumbFileLocation);
+                                    unlink($rawThumbFileLocation);
+                                }
                             }
                         } 
                     }
