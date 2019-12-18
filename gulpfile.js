@@ -298,7 +298,7 @@ function clean_sql_directories(cb) {
         });
     cb();
 }
-exports.xetool = series(gulp_init_settings, clean_sql_directories, delete_xetool, list_all_schema, xetool_apis, copy_xetool_vendor, rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets, exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql, inkxe_admin);
+exports.xetool = series(gulp_init_settings, clean_sql_directories, delete_xetool, list_all_schema, xetool_apis, copy_xetool_vendor, rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets, exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
 exports.stopxedocker = series(gulp_init_settings, stopxedocker);
