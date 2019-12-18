@@ -64,6 +64,10 @@ defined('TEMP_FOLDER')                  OR define('TEMP_FOLDER', 'temp/');
 defined('TEMPLATE_FOLDER')              OR define('TEMPLATE_FOLDER', 'template/');
 defined('CAPTURE_FOLDER')               OR define('CAPTURE_FOLDER', 'template/captures/');
 defined('PREDECORATOR_FOLDER')          OR define('PREDECORATOR_FOLDER', 'template/predecorators/');
+// For template module
+defined('TEMP_FOLDER')                  OR define('TEMP_FOLDER', 'temp/');
+defined('TEMPLATE_FOLDER')              OR define('TEMPLATE_FOLDER', 'template/');
+defined('CAPTURE_FOLDER')               OR define('CAPTURE_FOLDER', 'template/captures/');
 
 /*
 |--------------------------------------------------------------------------
