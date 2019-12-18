@@ -4,6 +4,7 @@
 	"version": "0.0.0-ignored",
 	"devDependencies": {
 		"child_process": "^1.0.2",
+		"del": "^5.1.0",
 		"directory-exists": "^2.0.1",
 		"gulp": "^4.0.2",
 		"gulp-concat": "^2.6.1",
