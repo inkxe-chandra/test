@@ -15,6 +15,7 @@ var rename = require("gulp-rename");
 const Postgrator = require('postgrator');
 const directoryExists = require('directory-exists');
 var jscrambler = require('gulp-jscrambler');
+const del = require('del');
 function gulp_init_settings(cb) {
     envsettings.data = JSON.parse(fs.readFileSync('./envsettings.json'));
     cb();
@@ -118,9 +119,18 @@ function pullxeprojects(cb) {
 }
 
 function list_all_schema(cb) {
-    return exec2(envsettings.data.command_prefix + ' rm -rf ../schema/*.sql && ' + envsettings.data.command_prefix + ' cp -rf ../inkxe10-*/schema/*.sql ../schema/', function(err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
+    directoryExists('../schema', (error, result) => {
+        if (result === true) {
+            return exec2(envsettings.data.command_prefix + ' rm -rf ../schema/*.sql && ' + envsettings.data.command_prefix + ' cp -rf ../inkxe10-*/schema/*.sql ../schema/', function(err, stdout, stderr) {
+                console.log(stdout);
+                console.log(stderr);
+            });
+        } else {
+            return exec2(envsettings.data.command_prefix + ' mkdir ../schema/ && ' + envsettings.data.command_prefix + ' rm -rf ../schema/*.sql && ' + envsettings.data.command_prefix + ' cp -rf ../inkxe10-*/schema/*.sql ../schema/', function(err, stdout, stderr) {
+                console.log(stdout);
+                console.log(stderr);
+            });           
+        }
     });
     cb();
 
@@ -141,7 +151,7 @@ function sql_files_naming(cb) {
         count++;
         var pad_number = pad(count, 3);
         var data = file.split(".");
-        src("../schema/" + file)
+        return src("../schema/" + file)
             .pipe(rename(pad_number + ".do." + data[2] + ".sql"))
             .pipe(dest("../out/"));
     });
@@ -160,8 +170,7 @@ function remove_unwanted_sql(cb) {
 }
 
 function schema_update(cb) {
-    var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
-    const postgrator = new Postgrator({
+     const postgrator = new Postgrator({
         // Directory containing migration files
         migrationDirectory: '../out',
         validateChecksums: false, // Set to false to skip validation
@@ -175,7 +184,7 @@ function schema_update(cb) {
         port: 3306,
         database: 'xe_install_db_inkxe_10',
         username: envsettings.data.db_user,
-        password: db_password,
+        password: envsettings.data.db_password,
         // Schema table name. Optional. Default is schemaversion
         // If using Postgres, schema may be specified using . separator
         // For example, { schemaTable: 'schema_name.table_name' }
@@ -190,7 +199,7 @@ function schema_update(cb) {
 
 function create_basic_sql(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
-    return exec2(envsettings.data.command_prefix + ' ' + envsettings.data.mysql_path + 'mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
+    return exec2(envsettings.data.command_prefix + ' mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
     });
@@ -242,8 +251,9 @@ function resetenv(cb){
     cb(); 
 }
 function exec_drop_basic_db(cb){
-    var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;       
-    return exec2(envsettings.data.command_prefix+' '+envsettings.data.mysql_path+'mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";', 
+    var db_password       = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
+    console.log(envsettings.data.command_prefix +' mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";');       
+    return exec2(envsettings.data.command_prefix +' mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' -p '+db_password+'  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";', 
         function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);    
@@ -251,8 +261,8 @@ function exec_drop_basic_db(cb){
     cb();
 }
 function exec_create_basic_db(cb){
-    var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
-    return exec2(envsettings.data.command_prefix+' '+envsettings.data.mysql_path+'mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "CREATE DATABASE IF NOT EXISTS xe_install_db_inkxe_10";', 
+    var db_password       = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
+    return exec2(envsettings.data.command_prefix +' mysql -h '+envsettings.data.db_host+' -u '+envsettings.data.db_user+' '+db_password+'  -e "CREATE DATABASE IF NOT EXISTS xe_install_db_inkxe_10";', 
         function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);    
@@ -267,7 +277,15 @@ function update_build_modules(cb){
 });
     cb();
 }
-exports.xetool = series(gulp_init_settings,list_all_schema,rename_sql_files, sql_files_naming, delete_xetool, xetool_apis, copy_xetool_vendor, merge_apis, copy_xetool_assets,exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql);
+function clean_sql_directories(cb){
+    return exec2(envsettings.data.command_prefix +' rm -rf ../out/* ../schema/*', 
+    function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);    
+});
+    cb();
+}
+exports.xetool = series(gulp_init_settings,clean_sql_directories, delete_xetool,list_all_schema, xetool_apis, copy_xetool_vendor,rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets,exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql,inkxe_admin);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
 exports.stopxedocker = series(gulp_init_settings, stopxedocker);
@@ -277,3 +295,4 @@ exports.createbasicsql = series(gulp_init_settings,list_all_schema,rename_sql_fi
 exports.scramblefiles  = series(gulp_init_settings,scramble_code,move_scrambled_codes_to_main);
 exports.resetenv       = series(resetenv);
 exports.update_build_modules = series(gulp_init_settings,update_build_modules);
+exports.test=series(gulp_init_settings,clean_sql_directories,list_all_schema,rename_sql_files);
