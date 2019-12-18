@@ -23,6 +23,7 @@ return [
     'ColorPalletes'         => ['CORE' => 1, 'CUSTOM' => 0],
     'DecorationAreas'       => ['CORE' => 1, 'CUSTOM' => 0],
     'Settings'              => ['CORE' => 1, 'CUSTOM' => 0],
+    'Templates'              => ['CORE' => 1, 'CUSTOM' => 0],
     // 'OrderLogs'             => ['CORE' => 1, 'CUSTOM' => 0],
     // 'ColorVariants'         => ['CORE' => 1, 'CUSTOM' => 0],
     // 'ColorTypes'            => ['CORE' => 1, 'CUSTOM' => 0],
