@@ -309,3 +309,4 @@ exports.scramblefiles = series(gulp_init_settings, scramble_code, move_scrambled
 exports.resetenv = series(resetenv);
 exports.update_build_modules = series(gulp_init_settings, update_build_modules);
 exports.test = series(gulp_init_settings, clean_sql_directories, list_all_schema, rename_sql_files);
+exports.inkxeadmin=series(gulp_init_settings,inkxe_admin);
