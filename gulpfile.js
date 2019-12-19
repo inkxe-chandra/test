@@ -326,4 +326,4 @@ exports.resetenv = series(resetenv);
 exports.update_build_modules = series(gulp_init_settings, update_build_modules);
 exports.test = series(gulp_init_settings, clean_sql_directories, list_all_schema, rename_sql_files);
 exports.inkxeadmin=series(gulp_init_settings,inkxe_admin);
-exports.disable_sql_strict_mode=series(gulp_init_settings,update_angular_strict_mode);
+exports.disable_angular_build_strict_mode=series(gulp_init_settings,update_angular_strict_mode);
