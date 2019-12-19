@@ -206,7 +206,7 @@ function schema_update(cb) {
 
 function create_basic_sql(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
-    return exec2(envsettings.data.command_prefix + ' mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
+    return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
     });
@@ -263,7 +263,7 @@ function resetenv(cb) {
 
 function exec_drop_basic_db(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
-    return exec2(envsettings.data.command_prefix + ' mysql -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";',
+    return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysql -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";',
         function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);
@@ -273,7 +273,7 @@ function exec_drop_basic_db(cb) {
 
 function exec_create_basic_db(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
-    return exec2(envsettings.data.command_prefix + ' mysql -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  -e "CREATE DATABASE IF NOT EXISTS xe_install_db_inkxe_10";',
+    return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysql -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  -e "CREATE DATABASE IF NOT EXISTS xe_install_db_inkxe_10";',
         function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);
