@@ -238,7 +238,7 @@ function copy_inkxe_to_package(cb) {
 function scramble_code(cb) {
     var jscrambler_data = JSON.parse(fs.readFileSync('jscrambler.json'));
     return gulp
-        .src([envsettings.data.project_path + '/xetool/admin/*.js'])
+        .src([envsettings.data.project_path + '/xetool/admin/*.js','!'+envsettings.data.project_path + '/xetool/admin/polyfills-*.js','!'+envsettings.data.project_path + '/xetool/admin/runtime-*.js','!'+envsettings.data.project_path + '/xetool/admin/common-*.js'])
         .pipe(jscrambler(jscrambler_data))
         .pipe(gulp.dest(envsettings.data.project_path + '/xetool/scrambled/'));
     cb();
@@ -325,4 +325,5 @@ exports.scramblefiles = series(gulp_init_settings, scramble_code, move_scrambled
 exports.resetenv = series(resetenv);
 exports.update_build_modules = series(gulp_init_settings, update_build_modules);
 exports.test = series(gulp_init_settings, clean_sql_directories, list_all_schema, rename_sql_files);
-exports.inkxeadmin=series(gulp_init_settings,update_angular_strict_mode,inkxe_admin);
+exports.inkxeadmin=series(gulp_init_settings,inkxe_admin);
+exports.disable_sql_strict_mode=series(gulp_init_settings,update_angular_strict_mode);
