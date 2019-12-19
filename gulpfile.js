@@ -298,6 +298,22 @@ function clean_sql_directories(cb) {
         });
     cb();
 }
+function update_angular_strict_mode(cb){
+  directoryExists(envsettings.data.project_path + '/inkxe10-designer-admin', (error, result) => {
+        if (result === true) {
+            var config= JSON.parse(fs.readFileSync(envsettings.data.project_path + '/inkxe10-designer-admin/tsconfig.json'));
+            config.compilerOptions.strict=false;         
+            fs.writeFileSync(envsettings.data.project_path + '/inkxe10-designer-admin/tsconfig.json', JSON.stringify(config));
+            // return exec2('cd ' + envsettings.data.project_path + '/inkxe10-designer-admin && ' + envsettings.data.command_prefix + ' ng build --baseHref=./ --crossOrigin=anonymous --deleteOutputPath=true --deployUrl=./ --extractLicenses=false --lazyModules --optimization=true --outputHashing=none --prod=true --outputPath=../xetool/admin --resourcesOutputPath=./assets/fonts/', function(err, stdout, stderr) {
+            //     console.log(stdout);
+            //     console.log(stderr);
+            // });
+        } else {
+            console.log("Inkxe-X Designer Admin Is Not Present.");
+        }
+    });
+    cb();
+}
 exports.xetool = series(gulp_init_settings, clean_sql_directories, delete_xetool, list_all_schema, xetool_apis, copy_xetool_vendor, rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets, exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
@@ -309,4 +325,4 @@ exports.scramblefiles = series(gulp_init_settings, scramble_code, move_scrambled
 exports.resetenv = series(resetenv);
 exports.update_build_modules = series(gulp_init_settings, update_build_modules);
 exports.test = series(gulp_init_settings, clean_sql_directories, list_all_schema, rename_sql_files);
-exports.inkxeadmin=series(gulp_init_settings,inkxe_admin);
+exports.inkxeadmin=series(gulp_init_settings,update_angular_strict_mode,inkxe_admin);
