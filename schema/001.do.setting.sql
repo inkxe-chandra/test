@@ -24,6 +24,12 @@ CREATE TABLE `categories` (
   PRIMARY KEY (`xe_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 
+INSERT INTO `asset_types` (`store_id`, `asset_type_id`, `parent_id`, `name`, `sort_order`, `is_disable`, `is_default`) VALUES
+('1', 3, 0, 'CMYK', 1, 0, 0),
+('1', 3, 0, 'RGB', 2, 0, 0),
+('1', 3, 0, 'Pantone', 3, 0, 0),
+('1', 3, 0, 'Pattern', 4, 0, 0),
+('1', 3, 0, 'Embroidery Thread', 5, 0, 0);
 
 CREATE TABLE `asset_types` (
   `xe_id` int(11) NOT NULL AUTO_INCREMENT,

@@ -59,6 +59,7 @@ defined('GRAPHICFONT_FOLDER')           OR define('GRAPHICFONT_FOLDER', 'graphic
 defined('WORDCLOUD_FOLDER')             OR define('WORDCLOUD_FOLDER', 'wordclouds/');
 defined('ORDER_FOLDER')                 OR define('ORDER_FOLDER', 'orders/');
 defined('LANGUAGE_FOLDER')              OR define('LANGUAGE_FOLDER', 'languages/');
+defined('COLORPALLETE_FOLDER')          OR define('COLORPALLETE_FOLDER',  'color_palletes/');
 // For template module
 defined('TEMP_FOLDER')                  OR define('TEMP_FOLDER', 'temp/');
 defined('TEMPLATE_FOLDER')              OR define('TEMPLATE_FOLDER', 'template/');
