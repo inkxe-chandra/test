@@ -252,8 +252,8 @@
      */
     function response($response, $apiResponse = []) {
         return  $response->withJson($apiResponse['data'])
-            ->withHeader("Access-Control-Allow-Origin", "*")
-            ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+            // ->withHeader("Access-Control-Allow-Origin", "*")
+            // ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
             ->withStatus($apiResponse['status']);
     }
     /**
