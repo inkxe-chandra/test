@@ -238,7 +238,7 @@ function copy_inkxe_to_package(cb) {
 function scramble_code(cb) {
     var jscrambler_data = JSON.parse(fs.readFileSync('jscrambler.json'));
     return gulp
-        .src([envsettings.data.project_path + '/xetool/admin/*.js','!'+envsettings.data.project_path + '/xetool/admin/polyfills-*.js','!'+envsettings.data.project_path + '/xetool/admin/runtime-*.js','!'+envsettings.data.project_path + '/xetool/admin/common-*.js'])
+        .src([envsettings.data.project_path + '/xetool/admin/*.js','!'+envsettings.data.project_path + '/xetool/admin/polyfills-*.js','!'+envsettings.data.project_path + '/xetool/admin/runtime-*.js','!'+envsettings.data.project_path + '/xetool/admin/common-*.js','!'+envsettings.data.project_path +'/xetool/admin/main-*.js'])
         .pipe(jscrambler(jscrambler_data))
         .pipe(gulp.dest(envsettings.data.project_path + '/xetool/scrambled/'));
     cb();
