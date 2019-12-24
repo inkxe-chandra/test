@@ -190,8 +190,16 @@ function schema_update(cb) {
     return postgrator
         .migrate()
         .then(appliedMigrations => console.log(appliedMigrations))
-        .catch(error => console.log(error),sql_import_error =1);
+        .catch(error =>detect_error(error));
     cb();
+}
+function detect_error(data){
+    if(data){
+        console.log(data);
+        sql_import_error=1;
+    }else{
+        sql_import_error=0;
+    }
 }
 
 function create_basic_sql(cb) {
@@ -311,7 +319,8 @@ function update_angular_strict_mode(cb){
     cb();
 }
 function inkxeX_xetool_build_successful(cb){
-    if(sql_import_error){
+    console.log(sql_import_error);
+    if(sql_import_error==1){
         console.log("inkxeX_xetool_package_created_unsuccessful.");
     }else{
     console.log("inkxeX_xetool_package_created_successfully.");
