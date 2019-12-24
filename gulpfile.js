@@ -189,7 +189,7 @@ function schema_update(cb) {
     return postgrator
         .migrate()
         .then(appliedMigrations => console.log(appliedMigrations))
-        .catch(error => console.log(error));
+        .catch(error =>console.log(error), process.exit());
     cb();
 }
 
@@ -197,7 +197,6 @@ function create_basic_sql(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
     return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
         console.log(stdout);
-        console.log("inkxeX_xetool_package_created_successfully.");
         console.log(stderr);
     });
     cb();
@@ -207,7 +206,7 @@ function inkxe_admin(cb) {
     directoryExists(envsettings.data.project_path + '/inkxe10-designer-admin', (error, result) => {
         if (result === true) {
             return exec2('cd ' + envsettings.data.project_path + '/inkxe10-designer-admin && ' + envsettings.data.command_prefix + ' ng build --baseHref=./ --crossOrigin=anonymous --deleteOutputPath=true --deployUrl=./ --extractLicenses=false --lazyModules --optimization=true --outputHashing=none --prod=true --outputPath=../xetool/admin --resourcesOutputPath=./assets/fonts/', function(err, stdout, stderr) {
-                console.log(stdout.indexOf("Date:"));
+                console.log(stdout);
                 if(stdout.indexOf("Date:")!=0){
                     console.log("InkxeX_Designer_admin_build_successful");
                 }else{
@@ -310,7 +309,11 @@ function update_angular_strict_mode(cb){
     });
     cb();
 }
-exports.xetool = series(gulp_init_settings, clean_sql_directories, delete_xetool, list_all_schema, xetool_apis, copy_xetool_vendor, rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets, exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql);
+function inkxeX_xetool_build_successful(cb){
+    console.log("inkxeX_xetool_package_created_successfully.");
+    cb();
+    }
+exports.xetool = series(gulp_init_settings, clean_sql_directories, delete_xetool, list_all_schema, xetool_apis, copy_xetool_vendor, rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets, exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql,inkxeX_xetool_build_successful);
 exports.start_docker = series(gulp_init_settings, build_docker_package, initiate_docker_server);
 exports.pullxedocker = series(gulp_init_settings, pull_dockerfiles);
 exports.stopxedocker = series(gulp_init_settings, stopxedocker);
