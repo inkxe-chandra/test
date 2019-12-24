@@ -134,12 +134,23 @@ abstract class Component {
      */
     public function getAssetCategories($slug = '') {
         $categories = [];
-        if ($slug != '') {
+        if ($slug != '' && $slug != 'products') {
             $assetType = DB::table('asset_types')->where('slug', $slug)->first();
             if (!empty($assetType)) {
                 $assetTypeId = $assetType->xe_id;
-                $categories = DB::table('categories')->where('asset_type_id', $assetTypeId)->get();
+                if(\App\Components\Models\Category::where('asset_type_id', $assetTypeId)->count() > 0) {
+                    $categories = \App\Components\Models\Category::where('asset_type_id', $assetTypeId)->select('xe_id as id', 'parent_id', 'name', 'is_disable')->get();
+                    $categories = $categories->toArray();
+                } else {
+                    $categories = [];
+                }
             }
+        } else if($slug == 'products') {
+            $guzzle = new \GuzzleHttp\Client();
+            $products = $guzzle->request('GET', BASE_URL . 'products/list-of-categories');
+            $productsCategoryJson = $products->getBody();
+            $categories = json_decode($productsCategoryJson, true);
+            $categories = $categories['data'];
         }
         return $categories;
     }
