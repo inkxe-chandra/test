@@ -3,13 +3,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var exec2 = require('child_process').exec;
 var exec = require('gulp-exec');
 var os = require('os');
-const {
-    src,
-    dest,
-    series,
-    task,
-    watch
-} = require('gulp');
+const {src,dest,series,task,watch} = require('gulp');
 var gulp = require('gulp');
 var Prompt = require('prompt-checkbox');
 const envsettings = {};
@@ -81,7 +75,6 @@ function build_docker_package(cb) {
 
 
 function initiate_docker_server(cb) {
-
     return exec2('cd ' + envsettings.data.project_path + 'inkxe10-env/docker/ && ' + envsettings.data.command_prefix + ' docker-compose up', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -90,7 +83,6 @@ function initiate_docker_server(cb) {
 }
 
 function pull_dockerfiles(cb) {
-
     return exec2('cd ' + envsettings.data.project_path + 'inkxe10-env/docker/ && ' + envsettings.data.command_prefix + ' docker-compose pull', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -99,7 +91,6 @@ function pull_dockerfiles(cb) {
 }
 
 function stopxedocker(cb) {
-
     return exec2('cd ' + envsettings.data.project_path + 'inkxe10-env/docker/ && ' + envsettings.data.command_prefix + ' docker-compose down && ' + envsettings.data.command_prefix + ' docker-compose stop', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -108,7 +99,6 @@ function stopxedocker(cb) {
 }
 
 function restartxedocker(cb) {
-
     return exec2('cd ' + envsettings.data.project_path + 'inkxe10-env/docker/ && ' + envsettings.data.command_prefix + ' docker-compose restart', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -117,7 +107,6 @@ function restartxedocker(cb) {
 }
 
 function pullxeprojects(cb) {
-
     return exec2('cd ' + envsettings.data.project_path + 'inkxe10-env/docker/ &&' + envsettings.data.command_prefix + ' docker exec -d php72 cp -a /var/www/html/xeprojects/. /var/xeprojects', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
@@ -208,6 +197,7 @@ function create_basic_sql(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
     return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
         console.log(stdout);
+        console.log("inkxeX_xetool_package_created_successfully.");
         console.log(stderr);
     });
     cb();
@@ -216,8 +206,13 @@ function create_basic_sql(cb) {
 function inkxe_admin(cb) {
     directoryExists(envsettings.data.project_path + '/inkxe10-designer-admin', (error, result) => {
         if (result === true) {
-            return exec2('cd ' + envsettings.data.project_path + '/inkxe10-designer-admin && ' + envsettings.data.command_prefix + ' ng build --baseHref=./ --crossOrigin=anonymous --deleteOutputPath=true --deployUrl=./ --extractLicenses=false --lazyModules --optimization=true --outputHashing=all --prod=true --outputPath=../xetool/admin --resourcesOutputPath=./assets/fonts/', function(err, stdout, stderr) {
-                console.log(stdout);
+            return exec2('cd ' + envsettings.data.project_path + '/inkxe10-designer-admin && ' + envsettings.data.command_prefix + ' ng build --baseHref=./ --crossOrigin=anonymous --deleteOutputPath=true --deployUrl=./ --extractLicenses=false --lazyModules --optimization=true --outputHashing=none --prod=true --outputPath=../xetool/admin --resourcesOutputPath=./assets/fonts/', function(err, stdout, stderr) {
+                console.log(stdout.indexOf("Date:"));
+                if(stdout.indexOf("Date:")!=0){
+                    console.log("InkxeX_Designer_admin_build_successful");
+                }else{
+                    console.log("InkxeX_Designer_admin_build_failed");
+                }
                 console.log(stderr);
             });
         } else {
@@ -263,6 +258,7 @@ function resetenv(cb) {
 
 function exec_drop_basic_db(cb) {
     var db_password = (envsettings.data.db_password == '') ? '' : '-p' + envsettings.data.db_password;
+    console.log(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysql -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";');
     return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysql -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  -e "DROP DATABASE IF EXISTS xe_install_db_inkxe_10";',
         function(err, stdout, stderr) {
             console.log(stdout);
