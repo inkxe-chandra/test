@@ -16,7 +16,7 @@ const Postgrator = require('postgrator');
 const directoryExists = require('directory-exists');
 var jscrambler = require('gulp-jscrambler');
 const del = require('del');
-var sql_import_error='0';
+var xetool_package_error='0';
 
 function gulp_init_settings(cb) {
     envsettings.data = JSON.parse(fs.readFileSync('./envsettings.json'));
@@ -37,6 +37,7 @@ function copy_xetool_assets(cb) {
     return exec2('(' + envsettings.data.command_prefix + ' [ -d "' + envsettings.data.project_path + '/' + envsettings.data.production_path + '/assets"' + ' ] || mkdir "' + envsettings.data.project_path + '/' + envsettings.data.production_path + '/assets") && cp -a ' + envsettings.data.project_path + '/inkxe10-**/assets/.' + ' ' + envsettings.data.project_path + "/" + envsettings.data.production_path + '/assets/', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
+        detect_error(stderr)
     });
     cb();
 }
@@ -53,6 +54,7 @@ function merge_apis(cb) {
     return exec2(envsettings.data.command_prefix + ' cp -a ' + envsettings.data.project_path + '/inkxe10-**/api/v1/app/.' + ' ' + envsettings.data.project_path + "/" + envsettings.data.production_path + '/api/v1/app/ ', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
+        detect_error(stderr)
     });
     cb();
 }
@@ -196,9 +198,9 @@ function schema_update(cb) {
 function detect_error(data){
     if(data){
         console.log(data);
-        sql_import_error=1;
+        xetool_package_error=1;
     }else{
-        sql_import_error=0;
+        xetool_package_error=0;
     }
 }
 
@@ -207,6 +209,7 @@ function create_basic_sql(cb) {
     return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
+        detect_error(stderr)
     });
     cb();
 }
@@ -271,6 +274,7 @@ function exec_drop_basic_db(cb) {
         function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);
+            detect_error(stderr)
         });
     cb();
 }
@@ -281,6 +285,7 @@ function exec_create_basic_db(cb) {
         function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);
+            detect_error(stderr)
         });
     cb();
 }
@@ -319,8 +324,8 @@ function update_angular_strict_mode(cb){
     cb();
 }
 function inkxeX_xetool_build_successful(cb){
-    console.log(sql_import_error);
-    if(sql_import_error==1){
+    console.log(xetool_package_error);
+    if(xetool_package_error==1){
         console.log("inkxeX_xetool_package_created_unsuccessful.");
     }else{
     console.log("inkxeX_xetool_package_created_successfully.");
