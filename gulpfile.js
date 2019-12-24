@@ -16,6 +16,7 @@ const Postgrator = require('postgrator');
 const directoryExists = require('directory-exists');
 var jscrambler = require('gulp-jscrambler');
 const del = require('del');
+var sql_import_error='0';
 
 function gulp_init_settings(cb) {
     envsettings.data = JSON.parse(fs.readFileSync('./envsettings.json'));
@@ -189,7 +190,7 @@ function schema_update(cb) {
     return postgrator
         .migrate()
         .then(appliedMigrations => console.log(appliedMigrations))
-        .catch(error =>console.log(error), process.exit());
+        .catch(error => console.log(error),sql_import_error =1);
     cb();
 }
 
@@ -310,7 +311,11 @@ function update_angular_strict_mode(cb){
     cb();
 }
 function inkxeX_xetool_build_successful(cb){
+    if(sql_import_error){
+        console.log("inkxeX_xetool_package_created_unsuccessful.");
+    }else{
     console.log("inkxeX_xetool_package_created_successfully.");
+    }
     cb();
     }
 exports.xetool = series(gulp_init_settings, clean_sql_directories, delete_xetool, list_all_schema, xetool_apis, copy_xetool_vendor, rename_sql_files, sql_files_naming, merge_apis, copy_xetool_assets, exec_drop_basic_db, exec_create_basic_db, schema_update, create_basic_sql,inkxeX_xetool_build_successful);
