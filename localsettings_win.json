@@ -6,5 +6,5 @@
 	"db_host": "localhost",
 	"db_user": "root",
 	"db_password": "",
-	"modules":["inkxe10-backgrounds inkxe10-decoration-area inkxe10-distress inkxe10-fonts inkxe10-shapes inkxe10-cliparts inkxe10-designer-admin inkxe10-env inkxe10-settings inkxe10-uploadImage"]
+	"modules":["inkxe10-env inkxe10-template inkxe10-print-profile inkxe10-decoration-area inkxe10-settings inkxe10-customer inkxe10-orders inkxe10-distress inkxe10-uploadImage inkxe10-backgrounds inkxe10-shapes inkxe10-colors inkxe10-fonts inkxe10-products inkxe10-designer-admin inkxe10-cliparts"]
 }
