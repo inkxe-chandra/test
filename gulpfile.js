@@ -218,12 +218,14 @@ function inkxe_admin(cb) {
         if (result === true) {
             return exec2('cd ' + envsettings.data.project_path + '/inkxe10-designer-admin && ' + envsettings.data.command_prefix + ' ng build --baseHref=./ --crossOrigin=anonymous --deleteOutputPath=true --deployUrl=./ --extractLicenses=false --lazyModules --optimization=true --outputHashing=all --prod=true --outputPath=../xetool/admin --resourcesOutputPath=./assets/fonts/', function(err, stdout, stderr) {
                 console.log(stdout);
-                if(stdout.indexOf("Date:")!=0){
-                    console.log("InkxeX_Designer_admin_build_successful");
-                }else{
-                    console.log("InkxeX_Designer_admin_build_failed");
-                }
                 console.log(stderr);
+                console.log(err);
+                if(stderr){
+                    console.log("InkxeX_Designer_admin_build_failed");
+                }else{
+                    console.log("InkxeX_Designer_admin_build_successful");                    
+                }
+                
             });
         } else {
             console.log("Inkxe-X Designer Admin Is Not Present.");
