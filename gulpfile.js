@@ -209,7 +209,6 @@ function create_basic_sql(cb) {
     return exec2(envsettings.data.command_prefix +' '+envsettings.data.mysql_path+'mysqldump -h ' + envsettings.data.db_host + ' -u ' + envsettings.data.db_user + ' ' + db_password + '  xe_install_db_inkxe_10 > ../xetool/basic_database.sql', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
-        detect_error(stderr)
     });
     cb();
 }
@@ -274,7 +273,6 @@ function exec_drop_basic_db(cb) {
         function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);
-            detect_error(stderr)
         });
     cb();
 }
@@ -285,7 +283,6 @@ function exec_create_basic_db(cb) {
         function(err, stdout, stderr) {
             console.log(stdout);
             console.log(stderr);
-            detect_error(stderr)
         });
     cb();
 }
